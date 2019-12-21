@@ -104,19 +104,41 @@ public class EchoServer extends AbstractServer
         client.getInfo("loginID") + "\" " + client);
       this.sendToAllClients(client.getInfo("loginID") + "> " + msg);
       
-      /* client commands are executing by sending !command message
+      /* client commands are executing by sending !command message 
+       * available commands:
+       * list-catalog
+       * update-id 
        * */
       if(msg.toString().startsWith("!")) {
-          if (msg.toString().equalsIgnoreCase("!db")) {
-        	  System.out.println("db command recieved");
+    	  if (msg.toString().startsWith("!glc")) {
+        	  System.out.println("get-list-catalog command recieved ");
         	  try {
-    			String catalogList = jdbc.listCatalog();
-    			this.sendToAllClients(client.getInfo("loginID") + catalogList);
+    			String res = "\n"+jdbc.listCatalog();
+    			this.sendToAllClients(client.getInfo("loginID") + res);
         	  } catch (SSLException e) {
     			e.printStackTrace();
     		}
           }
-    	  System.out.println(">"+msg.toString()); 
+    	  else if (msg.toString().startsWith("!spi")) {
+        	  System.out.println("set-price-id command recieved");
+        	  
+        	  try {
+    			String res = "\n"+jdbc.setPriceId(msg.toString());
+    			this.sendToAllClients(client.getInfo("loginID") + res);
+        	  } catch (SSLException e) {
+    			e.printStackTrace();
+    		}
+          }
+    	  else if (msg.toString().startsWith("!spn")) {
+        	  System.out.println("set-price-name command recieved");
+        	  
+        	  try {
+    			String res = "\n"+jdbc.setPriceName(msg.toString());
+    			this.sendToAllClients(client.getInfo("loginID") + res);
+        	  } catch (SSLException e) {
+    			e.printStackTrace();
+    		}
+          }
       }
     }
   }
