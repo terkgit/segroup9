@@ -37,8 +37,9 @@ public class jdbc {
 				String shop = rs.getString("shop");
 				int price = rs.getInt("price");
 				int amount = rs.getInt("amount");
-				System.out.format("%d. %-16s price:%d - %4d items available at %s\n", id, name, price, amount, shop);
-				result=result.concat(name+": price-"+price+"$\n");
+				String line = String.format("[%d] %-16s price: %4d - %4d items available at \"%s\" shop\n", id, name, price, amount, shop);
+				System.out.print(line);
+				result=result.concat(line);
 			}
 			rs.close();
 			stmt.close();
@@ -53,7 +54,7 @@ public class jdbc {
 		catch (Exception e) {
 			e.printStackTrace();
 		} 
-		finally {
+		finally { 
 			try {
 				if (stmt != null)
 					stmt.close();
