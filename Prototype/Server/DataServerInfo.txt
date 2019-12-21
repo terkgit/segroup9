@@ -1,0 +1,8 @@
+Username: P0KAg0apUE
+
+Database name: P0KAg0apUE
+
+Password: e0IHtpz2Kx
+
+Tables:
+Catalog = [id,name,price,shop,amount]
