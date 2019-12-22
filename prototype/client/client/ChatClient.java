@@ -21,6 +21,9 @@ public class ChatClient extends AbstractClient
 {
   //Instance variables **********************************************
   
+	public static String lines[]; 
+	public static int selected;
+	
   /**
    * The interface type variable.  It allows the implementation of 
    * the display method in the client.
@@ -82,18 +85,63 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) 
   {
+	  System.out.println("Server msg");
+	  
+	 lines = msg.toString().split("\\n");
+	 int i=0;
+//	 while(i<lines.length)
+//		 System.out.println("i:"+i+lines[i++]);
+//	 System.out.println("***");
     clientUI.display(msg.toString());
+    if(lines[0].startsWith("ID"))
+    	 clientUI.display("Commands: \n !select <ID>");
   }
 
-   /**
-   * This method handles all data coming from the UI            
-   *
-   * @param message The message from the UI.    
-   */
+
   public void handleMessageFromClientUI(String message)
   {
-    // detect commands
-    if (message.charAt(0) == '#')
+	 if(message.startsWith("!select")) {
+		 selected = Integer.parseInt(message.split("\\s+")[1]);
+		 System.out.println(selected+ " selected");
+		 int i = 2;
+		 
+		 while(i<lines.length) {
+//			 String s[] = lines[i++].split("|");
+//			 System.out.println(s[0]);
+			 int id=Integer.parseInt(lines[i].split("|")[0]);
+			 if(id==selected) {
+				 System.out.println("selected item:\n" + lines[i]);
+				 System.out.println("Commands:\n!update <price>");
+				 return;
+			 }
+			 i++;
+		 }
+		 System.out.println("Item "+selected+" not found");
+		 selected = -1;
+		 return;
+		 
+	 } 
+	 
+	 if(message.startsWith("!update")) {
+		 int price = Integer.parseInt(message.split("\\s+")[1]);
+		 if(selected==-1) {
+			 System.out.println("No item selected (Use !select <ID>)");
+			 return;
+		 }
+		 
+		 
+
+	     try {
+			sendToServer(String.format("!updatePrice %d %d",selected,price));
+		} catch (IOException e) {
+			clientUI.display
+	          ("Could not send message to server.  Terminating client.");
+	        quit();
+		}
+	 }
+	 
+	 
+	 else if (message.charAt(0) == '#')
     {
       runCommand(message);
     }
