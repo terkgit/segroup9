@@ -23,7 +23,9 @@ public class jdbc {
 	public static String listCatalog() throws SSLException {
 		Connection conn = null;
 		Statement stmt = null;
-		String result="";
+		String result=String.format("ID %3s name%14s price%3s amount%s shop\n"," |"," |"," |"," |");
+		result=result.concat("-----------------------------------------------------------------\n");
+		System.out.print(result);
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -37,10 +39,11 @@ public class jdbc {
 				String shop = rs.getString("shop");
 				int price = rs.getInt("price");
 				int amount = rs.getInt("amount");
-				String line = String.format("[%d] %-16s price: %4d - %4d items available at \"%s\" shop\n", id, name, price, amount, shop);
+				String line = String.format("%-4d | %-16s | %6d |  %4d  | \"%s\"\n", id, name, price, amount, shop);
 				System.out.print(line);
 				result=result.concat(line);
 			}
+			
 			rs.close();
 			stmt.close();
 			conn.close();

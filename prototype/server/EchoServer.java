@@ -102,7 +102,7 @@ public class EchoServer extends AbstractServer
 
       System.out.println("Message received: " + msg + " from \"" + 
         client.getInfo("loginID") + "\" " + client);
-      this.sendToAllClients(client.getInfo("loginID") + "> " + msg);
+//      this.sendToAllClients(client.getInfo("loginID") + "> " + msg);
       
       /* client commands are executing by sending !command message 
        * available commands:
@@ -115,12 +115,10 @@ public class EchoServer extends AbstractServer
     		  	String args[] = msg.toString().trim().split("\\s+");
     		  	switch (args[0]) {
 	  	  			case ("!list"):
-	  	  				client.sendToClient("server>!list");
 	  	  				client.sendToClient(jdbc.listCatalog());
 				  	break;
 		
 		  	  		case ("!updatePrice"):
-	  	  				client.sendToClient("server>!updatePrice");
 		  	  			client.sendToClient(jdbc.updatePrice(args));
 				  	break;
 				  	
