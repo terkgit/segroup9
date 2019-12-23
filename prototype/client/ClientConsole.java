@@ -74,10 +74,7 @@ public class ClientConsole implements ChatIF
       while (true) 
       {
         message = fromConsole.readLine();
-        if(message.equals("send")) 
-        	client.handleMessageFromClientUI("Terkel 308740257 myStreet 1, myCity");
-        else
-        	client.handleMessageFromClientUI(message);
+        client.handleMessageFromClientUI(message);
       }
     } 
     catch (final Exception ex) 

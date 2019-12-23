@@ -2,7 +2,7 @@ package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+//import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -83,16 +83,17 @@ public class jdbc {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			//id,name,price,shop,amount
 
-			// update flight 387 price to 2019
 			String sql = "SELECT id, price FROM Catalog WHERE id = "+id;
 			ResultSet rs = stmt.executeQuery(sql);
-			rs.last();
-			rs.updateInt("price", price);
-			rs.updateRow();
-			result="";
-			
+			if(!rs.last()) {
+				result = String.format("product %d not found",id);
+			}
+			else {
+				rs.updateInt("price", price);
+				rs.updateRow();	
+				result= String.format("product %d price updated to %d",id,price);;
+			}
 			stmt.close();
 			conn.close();
 		} 

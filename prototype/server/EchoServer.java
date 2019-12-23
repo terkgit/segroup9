@@ -110,7 +110,6 @@ public class EchoServer extends AbstractServer
        * update-id 
        * */
       if(msg.toString().startsWith("!")) {
-    	  System.out.println("-!-");
     	  try {
     		  	String args[] = msg.toString().trim().split("\\s+");
     		  	switch (args[0]) {
@@ -256,7 +255,12 @@ public class EchoServer extends AbstractServer
     // display on server and clients that the client has connected.
     String msg = "A Client has connected";
     System.out.println(msg);
-    this.sendToAllClients(msg);
+    try {
+		client.sendToClient("successfuly connected to server\n\nWelcome!\n\n");
+		client.sendToClient("Commands:\n!list\n!updatePrice <ID> <price>");
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
   }
 
   /**

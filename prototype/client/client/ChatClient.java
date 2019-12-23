@@ -84,17 +84,15 @@ public class ChatClient extends AbstractClient
    * @param msg The message from the server.
    */
   public void handleMessageFromServer(Object msg) 
-  {
-	  System.out.println("Server msg");
-	  
+  {	  
 	 lines = msg.toString().split("\\n");
-	 int i=0;
+//	 int i=0;
 //	 while(i<lines.length)
 //		 System.out.println("i:"+i+lines[i++]);
 //	 System.out.println("***");
     clientUI.display(msg.toString());
     if(lines[0].startsWith("ID"))
-    	 clientUI.display("Commands: \n !select <ID>");
+    	 clientUI.display("Commands:\n!select <ID>\n!updatePrice <ID> <price>");
   }
 
 
@@ -122,7 +120,7 @@ public class ChatClient extends AbstractClient
 		 
 	 } 
 	 
-	 if(message.startsWith("!update")) {
+	 if(message.startsWith("!update ")) {
 		 int price = Integer.parseInt(message.split("\\s+")[1]);
 		 if(selected==-1) {
 			 System.out.println("No item selected (Use !select <ID>)");
