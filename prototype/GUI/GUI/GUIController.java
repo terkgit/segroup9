@@ -1,11 +1,11 @@
-package calculator;
+package GUI;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 
-public class Controller {
+public class GUIController {
 
 	String str="";
 	
@@ -98,8 +98,7 @@ public class Controller {
     @FXML
     void SetCalc(ActionEvent event) {
 		str=exam.getText();
-    	double d=ArithmeticApp.evaluate(str,0);
-    	str=Double.toString(d);
+    	str=str+".";
     	exam.setText(str);
     }
 }
