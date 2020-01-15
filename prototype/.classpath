@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="server"/>
+	<classpathentry kind="src" path="classes"/>
 	<classpathentry excluding="GUI.fxml|GUI.java|GUIController.java" kind="src" path="client"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
