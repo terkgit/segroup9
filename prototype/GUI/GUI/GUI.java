@@ -1,5 +1,13 @@
 package GUI;
 
+/*
+ * in order to execute GUI, set eclipse run configuration to:
+ * 
+ * 		VM arguments:
+ * 		--module-path C:\javafx-sdk-13.0.1\lib --add-modules=javafx.controls,javafx.fxml
+ * 
+ * */
+
 import java.io.IOException;
 import java.net.URL;
 import javafx.application.Application;
