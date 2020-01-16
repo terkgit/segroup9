@@ -1,6 +1,8 @@
 package client;
 
 import java.io.*;
+
+import GUI.GUIController;
 import client.*;
 import common.*;
 
@@ -28,7 +30,7 @@ public class ClientConsole implements ChatIF
   /**
    * The instance of the client that created this ConsoleChat.
    */
-  ChatClient client;
+  static ChatClient client;
 
   
   //Constructors ****************************************************
@@ -91,6 +93,7 @@ public class ClientConsole implements ChatIF
   public void display(final String message) 
   {
     System.out.println(message);
+    GUIController.display(message);
   }
 
   
@@ -133,5 +136,44 @@ public class ClientConsole implements ChatIF
     final ClientConsole chat= new ClientConsole(loginID, host, port);
     chat.accept();  //Wait for console data
   }
+
+
+	public static void start(String[] args) {
+		// TODO Auto-generated method stub
+	    String host = "";
+	    int port = 0;  //The port number
+	    String loginID = "";
+	    try
+	    {
+	      loginID = args[0];
+	    }
+	    catch(final ArrayIndexOutOfBoundsException e)
+	    {
+	      System.out.println("usage: java ClientConsole loginID [host [port]]");
+	      System.exit(1);
+	    }
+	    try
+	    {
+	      host = args[1];
+	    }
+	    catch(final ArrayIndexOutOfBoundsException e)
+	    {
+	      host = "localhost";
+	    }
+	    try {
+	      port = Integer.parseInt(args[2]);
+	    } catch (final ArrayIndexOutOfBoundsException e){
+	      port = DEFAULT_PORT;
+	    }
+	    final ClientConsole chat= new ClientConsole(loginID, host, port);
+//	    chat.accept();  //Wait for console data
+	}
+
+
+	public static void send(Object obj) {
+		String[] parse=(String[])obj;
+		String message=parse[0];
+		client.handleMessageFromClientUI(message);
+	}
 }
 //End of ConsoleChat class

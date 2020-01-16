@@ -91,8 +91,8 @@ public class ChatClient extends AbstractClient
 //		 System.out.println("i:"+i+lines[i++]);
 //	 System.out.println("***");
     clientUI.display(msg.toString());
-    if(lines[0].startsWith("ID"))
-    	 clientUI.display("Commands:\n!select <ID>\n!updatePrice <ID> <price>");
+//    if(lines[0].startsWith("ID"))
+//    	 clientUI.display("Commands:\n!select <ID>\n!updatePrice <ID> <price>");
   }
 
 

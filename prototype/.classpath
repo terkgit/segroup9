@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="server"/>
-	<classpathentry kind="src" path="GUI"/>
+	<classpathentry excluding="*.jpg" kind="src" path="GUI"/>
 	<classpathentry kind="src" path="classes"/>
 	<classpathentry kind="src" path="client"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">

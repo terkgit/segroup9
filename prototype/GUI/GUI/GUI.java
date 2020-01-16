@@ -13,13 +13,13 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) throws IOException {
     	//
-        URL url = getClass().getResource("GUI.fxml");
+        URL url = getClass().getResource("Welcome.fxml");
         AnchorPane pane = FXMLLoader.load( url );
         Scene scene = new Scene( pane );
         
         //
         stage.setScene(scene);
-        stage.setTitle("GUI");
+        stage.setTitle("Welcome");
         stage.show();
     }
 
