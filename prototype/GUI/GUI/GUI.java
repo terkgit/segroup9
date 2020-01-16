@@ -29,6 +29,11 @@ public class GUI extends Application {
         stage.setScene(scene);
         stage.setTitle("Welcome");
         stage.show();
+    	
+    	//  start client - local 127.0.0.1 5555
+    	String[] args = {"GUI","127.0.0.1","5555"};
+		System.out.println("starting client...");
+		client.ClientConsole.start(args);
     }
 
     public static void main(String[] args) {
