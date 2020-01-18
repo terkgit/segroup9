@@ -14,7 +14,7 @@
             <Image url="@welcomeb.jpg" />
          </image>
       </ImageView>
-      <Text fx:id="userTxt" layoutX="292.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi Guest">
+      <Text fx:id="userTxt" layoutX="290.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="usertxt">
          <font>
             <Font size="10.0" />
          </font></Text>

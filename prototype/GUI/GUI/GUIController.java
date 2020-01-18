@@ -19,13 +19,20 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 
 
 public class GUIController {
 	
-	private static int clientActive=0;
 	private static String clientMsg="";
-	public String userTxtStr=".userTxtStr.";
+	public static String userTxtStr="_Guest";	
+	public GUIController instance;
+	private static int waitLock=0;
+	
+	public class cont{
+		
+	}
+
 	
     
 	@FXML
@@ -63,7 +70,7 @@ public class GUIController {
 
     @FXML
     void initialize() {
-        assert userTxt != null : "fx:id=\"userTxt\" was not injected: check your FXML file 'Login.fxml'.";
+        userTxt.setText("Hi "+userTxtStr);
         assert catalogBtn != null : "fx:id=\"catalogBtn\" was not injected: check your FXML file 'Login.fxml'.";
         assert loginPassTxt != null : "fx:id=\"loginPassTxt\" was not injected: check your FXML file 'Login.fxml'.";
         assert loginUserTxt != null : "fx:id=\"loginUserTxt\" was not injected: check your FXML file 'Login.fxml'.";
@@ -90,16 +97,16 @@ public class GUIController {
     	URL url = getClass().getResource("Login.fxml");
         AnchorPane pane = FXMLLoader.load( url );
         Scene scene = new Scene( pane );
-        Stage stage = (Stage) loginBtn.getScene().getWindow();
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setTitle("Login");
         stage.setScene(scene);
-        userTxt.setText("Who are you??");
     }
     
 
     @FXML
     void gotoWelcome(ActionEvent event) throws IOException{
         String usertxt=loginUserTxt.getText();
+        userTxtStr=usertxt;
     	if(usertxt.equals("admin")) {    	
         	URL url = getClass().getResource("debug.fxml");
             AnchorPane pane = FXMLLoader.load( url );
@@ -111,11 +118,12 @@ public class GUIController {
 	    	URL url = getClass().getResource("Welcome.fxml");
 	        AnchorPane pane = FXMLLoader.load( url );
 	        Scene scene = new Scene( pane );
-	        Stage stage = (Stage) loginLogin.getScene().getWindow();
-	        stage.setTitle("Welcome "+loginUserTxt.getText());
-	        userTxt.setText("hi "+loginUserTxt.getText());
+	        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	        stage.setTitle("Welcome "+userTxtStr);
+	        System.out.println("user: "+userTxtStr);
+	        userTxt.setText("user: "+userTxtStr);
 	        stage.setScene(scene);
-	        userTxt.setText("hi "+loginUserTxt.getText());
+	        stage.show();
     	}
     }
     
@@ -129,23 +137,31 @@ public class GUIController {
     }
 
     @FXML
-    void debugSend(ActionEvent event) {
+    void debugSend(ActionEvent event) throws InterruptedException {
 		String msg[]= {debugCommandTxt.getText(),debugObjectTxt.getText()};
     	System.out.println("command: "+msg[0]);
     	System.out.println("Object: "+msg[1]);
-    	//  local 127.0.0.1 5555
-    	String[] args = {"GUI","127.0.0.1","5555"};
-    	if(clientActive==0) {
-    		clientActive=1;
-    		System.out.println("starting client...");
-    		client.ClientConsole.start(args);
-    	}
 		client.ClientConsole.send(msg);
+		int status = replyWait();
+		System.out.println("reply status: "+status);
+		debugObjectTxt.setText(clientMsg);
     }
+
+	private int replyWait() throws InterruptedException {
+		int i;
+		waitLock=1;
+		// wait 10 seconds for reply 
+		for( i=10; i>0 && waitLock==1;i--) {
+            Thread.sleep(100);
+            System.out.print(".");
+		}
+		return i;
+	}
 
 	public static void display(String message) {
 		// TODO Auto-generated method stub
 		clientMsg=message;
+		waitLock=0;
 	}
 	
 }
