@@ -6,9 +6,12 @@ import java.io.*;
 
 import javax.net.ssl.SSLException;
 
+import catalog.catalog;
 import ocsf.server.*;
 import common.*;
 import db.jdbc;
+import item.item;
+import user.*;
 
 /**
  * This class overrides some of the methods in the abstract 
@@ -23,7 +26,12 @@ import db.jdbc;
 public class EchoServer extends AbstractServer 
 {
   //Class variables *************************************************
-  
+	enum permissionLevel {
+		USER,
+		BOSS,
+		ADMIN
+	}
+	
   /**
    * The default port to listen on.
    */
@@ -69,9 +77,9 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
-  {
+  public void handleMessageFromClient(Object msg, ConnectionToClient client) {
+	
+	catalog ctlg=new catalog();
     if (msg.toString().startsWith("#login "))
     {
       if (client.getInfo("loginID") != null)
@@ -114,6 +122,8 @@ public class EchoServer extends AbstractServer
     		  	String args[] = msg.toString().trim().split("\\s+");
     		  	switch (args[0]) {
 	  	  			case ("!list"):
+	  	  				//ctlg=(catalog) jdbc.listCatalog();
+	  	  				//ctlg.printCatalog();
 	  	  				client.sendToClient(jdbc.listCatalog());
 				  	break;
 		
@@ -162,6 +172,41 @@ public class EchoServer extends AbstractServer
   {
     // run commands
     // a series of if statements
+	  
+	  if(message.equals("#additem")) {
+		  item newItem = new item();
+		  newItem.setId(7);
+		  newItem.setName("flower11");
+		  newItem.setPrice(22.32);
+		  newItem.setAmount(47);
+		  newItem.setShop("KukurikuShop");
+		  
+		  try {
+			jdbc.addNewObjectToDataBase(newItem);
+		} catch (SSLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	  }
+	  
+	  if(message.equals("#adduser")) {
+		  signedUser sUser = new signedUser();
+		  sUser.setId(326869716);
+		  sUser.setPassword("123456");
+//		  sUser.setPermissionLevel(permissionLevel.ADMIN);
+		  sUser.setUserName("Feodor");
+		  sUser.setPhone("0548835483");
+		  
+		  try {
+			jdbc.addNewObjectToDataBase(sUser);
+		} catch (SSLException e) {
+			// TODO Auto-generated catch block
+			
+			e.printStackTrace();
+		}
+		  
+	  }
+	  
 
     if (message.equalsIgnoreCase("#quit"))
     {

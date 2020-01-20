@@ -9,6 +9,10 @@ import java.sql.Statement;
 
 import javax.net.ssl.SSLException;
 
+import catalog.catalog;
+import item.item;
+import user.*;
+
 public class jdbc {
 	static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
@@ -20,12 +24,10 @@ public class jdbc {
 	static private final String USER = "P0KAg0apUE";
 	static private final String PASS = "e0IHtpz2Kx";
 
-	public static String listCatalog() throws SSLException {
+	public static Object listCatalog() throws SSLException {
 		Connection conn = null;
 		Statement stmt = null;
-		String result=String.format("ID %3s name%14s price%3s amount%s shop\n"," |"," |"," |"," |");
-		result=result.concat("-----------------------------------------------------------------\n");
-		System.out.print(result);
+		catalog ctlg = new catalog();
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -34,16 +36,15 @@ public class jdbc {
 			String sql = "SELECT * FROM `Catalog`";
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				int id =  rs.getInt("id"); 
-				String name = rs.getString("name");
-				String shop = rs.getString("shop");
-				int price = rs.getInt("price");
-				int amount = rs.getInt("amount");
-				String line = String.format("%-4d | %-16s | %6d |  %4d  | \"%s\"\n", id, name, price, amount, shop);
-				System.out.print(line);
-				result=result.concat(line);
+				item itm = new item();
+				itm.setId(rs.getInt("id")); 
+				itm.setName(rs.getString("name"));
+				itm.setAmount(rs.getInt("amount"));
+				itm.setPrice(rs.getInt("price"));
+				itm.setShop(rs.getString("shop"));
+				
+				ctlg.itemList.add(itm);
 			}
-			
 			rs.close();
 			stmt.close();
 			conn.close();
@@ -68,7 +69,70 @@ public class jdbc {
 				se.printStackTrace();
 			}
 		}
-		return result;
+		return ctlg;
+	}
+	
+	public static void addNewObjectToDataBase(Object obj) throws SSLException {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			ResultSet rs = null;
+			if(obj instanceof item) {
+				String sql = "SELECT * FROM `Catalog`";
+				item newItem = (item) obj;
+				rs = stmt.executeQuery(sql);
+				rs.moveToInsertRow();
+				rs.updateInt("id", newItem.getId());
+				rs.updateString("name", newItem.getName());
+				rs.updateDouble("price", newItem.getPrice());
+				rs.updateString("shop", newItem.getShop());
+				rs.updateInt("amount", newItem.getAmount());
+				rs.insertRow();
+				
+				
+			}
+			if(obj instanceof user) {
+				String sql = "SELECT * FROM `Users`";
+				signedUser sUser = new signedUser();
+				sUser=(signedUser) obj;
+				rs = stmt.executeQuery(sql);
+				rs.moveToInsertRow();
+				rs.updateInt("id",sUser.getId());
+				rs.updateString("name", sUser.getUserNane());
+				rs.updateString("password", sUser.getPassword());
+//			  	rs.updateObject("permission", sUser.getPermissionLevel());
+				rs.updateString("phone", sUser.getPhone());
+				rs.insertRow();
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+		} 
+		catch (SQLException se) {
+//			se.printStackTrace();
+//			System.out.println("SQLException: " + se.getMessage());
+//            System.out.println("SQLState: " + se.getSQLState());
+//            System.out.println("VendorError: " + se.getErrorCode());
+			System.out.println("Object alredy exist in DATABASE");
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+		finally { 
+			try {
+				if (stmt != null)
+					stmt.close();
+				if (conn != null)
+					conn.close();
+			} 
+			catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		//return obj;
 	}
 
 	public static String setPriceId(String[] args) throws SSLException {
