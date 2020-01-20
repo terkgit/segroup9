@@ -19,8 +19,16 @@ import javafx.stage.Stage;
 public class GUI extends Application {
 
     @Override
-    public void start(Stage stage) throws IOException {
-    	//
+    public void start(Stage stage) throws IOException { 
+    	
+    	//  start client - local 127.0.0.1 5555
+    	String[] args = {"GUI","127.0.0.1","5555"};
+		System.out.println("starting client...");
+		client.ClientConsole.start(args);
+    	
+		GUIController.initStatics();
+		
+		//
         URL url = getClass().getResource("Welcome.fxml");
         AnchorPane pane = FXMLLoader.load( url );
         Scene scene = new Scene( pane );
@@ -29,11 +37,7 @@ public class GUI extends Application {
         stage.setScene(scene);
         stage.setTitle("Welcome");
         stage.show();
-    	
-    	//  start client - local 127.0.0.1 5555
-    	String[] args = {"GUI","127.0.0.1","5555"};
-		System.out.println("starting client...");
-		client.ClientConsole.start(args);
+
     }
 
     public static void main(String[] args) {

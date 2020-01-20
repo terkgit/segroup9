@@ -256,8 +256,7 @@ public class EchoServer extends AbstractServer
     String msg = "A Client has connected";
     System.out.println(msg);
     try {
-		client.sendToClient("successfuly connected to server\n\nWelcome!\n\n");
-		client.sendToClient("Commands:\n!list\n!updatePrice <ID> <price>");
+		client.sendToClient("successfuly connected to server ");
 	} catch (IOException e) {
 		e.printStackTrace();
 	}

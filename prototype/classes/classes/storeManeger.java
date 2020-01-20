@@ -1,4 +1,5 @@
-package user;
+package classes;
+
 
 public class storeManeger extends signedUser {
 
