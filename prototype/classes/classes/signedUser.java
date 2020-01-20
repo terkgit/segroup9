@@ -1,6 +1,6 @@
 package classes;
 
 
-public class signedUser extends user{
+public class signedUser extends User{
 
 }

@@ -8,6 +8,9 @@ import ocsf.client.*;
 import common.*;
 import java.io.*;
 
+import GUI.GUIController;
+import classes.Command;
+
 /**
  * This class overrides some of the methods defined in the abstract
  * superclass in order to give more functionality to the client.
@@ -91,6 +94,9 @@ public class ChatClient extends AbstractClient
 //		 System.out.println("i:"+i+lines[i++]);
 //	 System.out.println("***");
     clientUI.display(msg.toString());
+    if(msg instanceof Command) {
+	    GUIController.display((Command)msg);
+    }
 //    if(lines[0].startsWith("ID"))
 //    	 clientUI.display("Commands:\n!select <ID>\n!updatePrice <ID> <price>");
   }

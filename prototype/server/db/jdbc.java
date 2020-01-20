@@ -9,6 +9,8 @@ import java.sql.Statement;
 
 import javax.net.ssl.SSLException;
 
+import classes.*;
+
 public class jdbc {
 	static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
@@ -20,12 +22,10 @@ public class jdbc {
 	static private final String USER = "P0KAg0apUE";
 	static private final String PASS = "e0IHtpz2Kx";
 
-	public static String listCatalog() throws SSLException {
+	public static Command listCatalog() throws SSLException {
 		Connection conn = null;
 		Statement stmt = null;
-		String result=String.format("ID %3s name%14s price%3s amount%s shop\n"," |"," |"," |"," |");
-		result=result.concat("-----------------------------------------------------------------\n");
-		System.out.print(result);
+		Catalog ctlg = new Catalog();
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -34,16 +34,15 @@ public class jdbc {
 			String sql = "SELECT * FROM `Catalog`";
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				int id =  rs.getInt("id"); 
-				String name = rs.getString("name");
-				String shop = rs.getString("shop");
-				int price = rs.getInt("price");
-				int amount = rs.getInt("amount");
-				String line = String.format("%-4d | %-16s | %6d |  %4d  | \"%s\"\n", id, name, price, amount, shop);
-				System.out.print(line);
-				result=result.concat(line);
+				Item itm = new Item();
+				itm.setId(rs.getInt("id")); 
+				itm.setName(rs.getString("name"));
+				itm.setAmount(rs.getInt("amount"));
+				itm.setPrice(rs.getInt("price"));
+				itm.setShop(rs.getString("shop"));
+				
+				ctlg.itemList.add(itm);
 			}
-			
 			rs.close();
 			stmt.close();
 			conn.close();
@@ -68,7 +67,72 @@ public class jdbc {
 				se.printStackTrace();
 			}
 		}
-		return result;
+
+		Command reply = new Command("Catalog list created", ctlg);
+		return reply;
+	}
+	
+	public static void addNewObjectToDataBase(Object obj) throws SSLException {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			ResultSet rs = null;
+			if(obj instanceof Item) {
+				String sql = "SELECT * FROM `Catalog`";
+				Item newItem = (Item) obj;
+				rs = stmt.executeQuery(sql);
+				rs.moveToInsertRow();
+				rs.updateInt("id", newItem.getId());
+				rs.updateString("name", newItem.getName());
+				rs.updateDouble("price", newItem.getPrice());
+				rs.updateString("shop", newItem.getShop());
+				rs.updateInt("amount", newItem.getAmount());
+				rs.insertRow();
+				
+				
+			}
+			if(obj instanceof User) {
+				String sql = "SELECT * FROM `Users`";
+				signedUser sUser = new signedUser();
+				sUser=(signedUser) obj;
+				rs = stmt.executeQuery(sql);
+				rs.moveToInsertRow();
+				rs.updateInt("id",sUser.getId());
+				rs.updateString("name", sUser.getUserNane());
+				rs.updateString("password", sUser.getPassword());
+//			  	rs.updateObject("permission", sUser.getPermissionLevel());
+				rs.updateString("phone", sUser.getPhone());
+				rs.insertRow();
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+		} 
+		catch (SQLException se) {
+//			se.printStackTrace();
+//			System.out.println("SQLException: " + se.getMessage());
+//            System.out.println("SQLState: " + se.getSQLState());
+//            System.out.println("VendorError: " + se.getErrorCode());
+			System.out.println("Object alredy exist in DATABASE");
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+		finally { 
+			try {
+				if (stmt != null)
+					stmt.close();
+				if (conn != null)
+					conn.close();
+			} 
+			catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		//return obj;
 	}
 
 	public static String setPriceId(String[] args) throws SSLException {
@@ -127,24 +191,23 @@ public class jdbc {
 		return result;
 	}
 
-	public static String updatePrice(String[] args) {
+	public static Command updatePrice(String[] args) {
 		String result = "setPriceId: unknown error!\n";
 		int id=-1;
 		int price=-1;
 		
 		if(args.length!=3)
-			return "illegal params (usage: !updatePrice <ID> <PRICE>)";
+			return new Command("illegal params (usage: !updatePrice <ID> <PRICE>)");
 		
 		result="set price to: "+args[1]+" for id: "+args[2];
 		id=Integer.parseInt(args[1]);
 		price=Integer.parseInt(args[2]);
 		if(id<=0||price<=0)
-			return "illegal params (usage: !updatePrice <ID> <PRICE>)";
+			return new Command("illegal params (usage: !updatePrice <ID> <PRICE>)");
 		
 		System.out.println("price:" + price + " id:" + id);
 		result = updatePriceId(price, id);
 		System.out.println("updatePriceId result: "+result);
-		
-		return result;
+		return new Command(result);
 	}
 }

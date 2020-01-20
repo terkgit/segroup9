@@ -3,6 +3,7 @@ package client;
 import java.io.*;
 
 import GUI.GUIController;
+import classes.Command;
 import client.*;
 import common.*;
 
@@ -90,10 +91,9 @@ public class ClientConsole implements ChatIF
    *
    * @param message The string to be displayed.
    */
-  public void display(final String message) 
+  public void display(String msg) 
   {
-    System.out.println(message);
-    GUIController.display(message);
+    System.out.println(msg);
   }
 
   

@@ -40,7 +40,7 @@ public class GUIController {
 	public static void initStatics(){
 		userTxtStr="Guest";
 		clientMsg="";
-		localCatalog;
+//		localCatalog;
 	}
 
     /**** Catalog ****/
@@ -159,9 +159,14 @@ public class GUIController {
 		return i;
 	}
 
-	public static void display(String message) {
+	public static void display(Command cmd) {
 		// TODO Auto-generated method stub
-		clientMsg=message;
+		clientMsg=cmd.msg;
+		if(cmd.obj instanceof Catalog) {
+			System.out.println("recieved catalog from server");
+			((Catalog)cmd.obj).printCatalog();
+		}
+		
 		waitLock=0;
 	}
 	
