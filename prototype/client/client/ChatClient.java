@@ -102,67 +102,21 @@ public class ChatClient extends AbstractClient
   }
 
 
-  public void handleMessageFromClientUI(String message)
-  {
-	 if(message.startsWith("!select")) {
-		 selected = Integer.parseInt(message.split("\\s+")[1]);
-		 System.out.println(selected+ " selected");
-		 int i = 2;
-		 
-		 while(i<lines.length) {
-//			 String s[] = lines[i++].split("|");
-//			 System.out.println(s[0]);
-			 int id=Integer.parseInt(lines[i].split("|")[0]);
-			 if(id==selected) {
-				 System.out.println("selected item:\n" + lines[i]);
-				 System.out.println("Commands:\n!update <price>");
-				 return;
-			 }
-			 i++;
-		 }
-		 System.out.println("Item "+selected+" not found");
-		 selected = -1;
-		 return;
-		 
-	 } 
-	 
-	 if(message.startsWith("!update ")) {
-		 int price = Integer.parseInt(message.split("\\s+")[1]);
-		 if(selected==-1) {
-			 System.out.println("No item selected (Use !select <ID>)");
-			 return;
-		 }
-		 
-		 
-
-	     try {
-			sendToServer(String.format("!updatePrice %d %d",selected,price));
+	public void handleMessageFromClientUI(Object obj)
+	{
+		try {
+			sendToServer((Command)obj);
 		} catch (IOException e) {
-			clientUI.display
-	          ("Could not send message to server.  Terminating client.");
-	        quit();
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 		}
-	 }
-	 
-	 
-	 else if (message.charAt(0) == '#')
-    {
-      runCommand(message);
-    }
-    else
-    {
-      try
-      {
-        sendToServer(message);
-      }
-      catch(IOException e)
-      {
-        clientUI.display
-          ("Could not send message to server.  Terminating client.");
-        quit();
-      }
-    }
-  }
+//		String message;
+//		if(obj instanceof Command){
+//			message=((Command)obj).msg;
+//		}else 
+//			message=obj.toString();
+
+	}
 
   /**
    * This method executes client commands. Benjamin Bergman, Oct 22, 

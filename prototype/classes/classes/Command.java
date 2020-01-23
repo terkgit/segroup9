@@ -17,6 +17,6 @@ public class Command  implements Serializable{
 	
 	public Command(String _msg){
 		msg=_msg;
-		obj=null;
+		obj="n/a";
 	}
 }

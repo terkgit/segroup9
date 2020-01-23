@@ -21,6 +21,22 @@ public class User implements Serializable {
 	private String password;
 	private permissionLevel permission;
 	private String phone;
+
+	public User() {
+		
+	}
+	
+	public void printUser() {
+		System.out.println("userName: "+userName);
+	}
+	
+	public User(String _name, String _pass) {
+		id=-1;
+		userName=_name;
+		password=_pass;
+		permission=permissionLevel.USER;
+		phone="";
+	}
 	
 	public int getId() {return id;}
 	public String getUserNane() {return userName;}

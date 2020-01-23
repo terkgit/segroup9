@@ -171,9 +171,7 @@ public class ClientConsole implements ChatIF
 
 
 	public static void send(Object obj) {
-		String[] parse=(String[])obj;
-		String message=parse[0];
-		client.handleMessageFromClientUI(message);
+		client.handleMessageFromClientUI(obj);
 	}
 }
 //End of ConsoleChat class

@@ -106,8 +106,7 @@ public class EchoServer extends AbstractServer
         return;
       }
 
-      System.out.println("Message received: " + msg + " from \"" + 
-        client.getInfo("loginID") + "\" " + client);
+      
 //      this.sendToAllClients(client.getInfo("loginID") + "> " + msg);
       
       /* client commands are executing by sending !command message 
@@ -115,9 +114,20 @@ public class EchoServer extends AbstractServer
        * list-catalog
        * update-id 
        * */
-      if(msg.toString().startsWith("!")) {
+      Command cmd;
+      if(msg instanceof Command) {
+    	  cmd=(Command)msg;
+    	  System.out.println("Message received: " + cmd.msg + " from \"" + 
+      				client.getInfo("loginID") + "\" " + client);
+      }
+      else {
+    	  System.out.println("no Command recieved");
+    	  return;
+      }
+      if(cmd.msg.startsWith("!")) {
     	  try {
-    		  	String args[] = msg.toString().trim().split("\\s+");
+    		  	String args[] = cmd.msg.trim().split("\\s+");
+    		  	Command reply;
     		  	switch (args[0]) {
 	  	  			case ("!list"):
 	  	  				//ctlg=(catalog) jdbc.listCatalog();
@@ -127,6 +137,22 @@ public class EchoServer extends AbstractServer
 		
 		  	  		case ("!updatePrice"):
 		  	  			client.sendToClient(jdbc.updatePrice(args));
+				  	break;
+		
+		  	  		case ("!login"):
+		  	  			System.out.println("TODO! !login");
+		  	  			((User)cmd.obj).printUser();
+		  	  			reply=new Command("TODO! !login ");
+		  	  			reply.obj=cmd.obj;
+		  	  			client.sendToClient(reply);
+				  	break;
+		
+		  	  		case ("!signUp"):
+		  	  			System.out.println("TODO! !signUp");
+		  	  			((User)cmd.obj).printUser();
+		  	  			reply=new Command("TODO! !signUp ");
+		  	  			reply.obj=cmd.obj;
+		  	  			client.sendToClient(reply);
 				  	break;
 				  	
 	  			} // switch

@@ -13,6 +13,7 @@ public class Item implements Serializable {
 	private String name; 
 	private String shop;
 	private int amount;
+	private String pic;
 	
 	public Item(String _name, double _price, int _amount, String _pic, int _id, String _shop) {
 		name=_name;
@@ -41,5 +42,13 @@ public class Item implements Serializable {
 	public void printItem() {
 		String line = String.format("%-4d | %-16s | %6g |  %4d  | \"%s\"\n", id, name, price, amount, shop);
 		System.out.print(line);
+	}
+
+	public String getPic() {
+		return pic;
+	}
+
+	public void setPic(String pic) {
+		this.pic = pic;
 	}
 }

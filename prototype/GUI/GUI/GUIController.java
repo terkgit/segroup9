@@ -39,8 +39,9 @@ public class GUIController {
 
 	public static void initStatics(){
 		userTxtStr="Guest";
-		clientMsg="";
-//		localCatalog;
+		clientMsg="";		
+		client.ClientConsole.send(new Command("!list"));
+		localCatalog=null;
 	}
 
     /**** Catalog ****/
@@ -79,14 +80,33 @@ public class GUIController {
     @FXML void initialize() {
         if(userTxt!=null)
         	userTxt.setText("Hi "+userTxtStr);
+        if(catalogTable!=null) {
+	        catalogTableName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
+	        catalogTablePrice.setCellValueFactory(new PropertyValueFactory<Item, Double>("price"));
+	        catalogTableAmount.setCellValueFactory(new PropertyValueFactory<Item, Integer>("amount"));
+	        catalogTablePic.setCellValueFactory(new PropertyValueFactory<Item, String>("pic"));
+	        catalogTableFill();
+        }
     }
     
     @FXML void addMyItem(ActionEvent event) {
-        catalogTableName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
-    	Item myItem= new Item("my item",0.0,0,"pic.jpg",0,"shop");
-    	ObservableList<Item> ctl = catalogTable.getItems();
-    	ctl.add(myItem);
-    }
+    	catalogTableFill();
+//    	        catalogTableName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
+//    	Item myItem= new Item("my item",0.0,0,"pic.jpg",0,"shop");
+//    	ObservableList<Item> ctl = catalogTable.getItems();
+//    	ctl.add(myItem);
+    }   
+    
+    void catalogTableFill() {
+    	if(localCatalog==null)
+    		System.out.println("catalog unavaileable");
+    	else {
+        	ObservableList<Item> ctl = catalogTable.getItems();
+        	localCatalog.itemList.forEach((item)->{
+        		ctl.add(item);
+        	});
+    	}
+    } // catalogTableFill
     
     @FXML void gotoCatalog(ActionEvent event) throws IOException {
         URL url = getClass().getResource("Catalog.fxml");
@@ -106,7 +126,7 @@ public class GUIController {
         stage.setScene(scene);
     }
     
-    @FXML void handleLogin(ActionEvent event) throws IOException {
+    @FXML void handleLogin(ActionEvent event) throws IOException, InterruptedException {
     	String usertxt=loginUserTxt.getText();
         userTxtStr=usertxt;
     	if(usertxt.equals("admin")) {    	
@@ -117,6 +137,22 @@ public class GUIController {
             stage.setScene(scene);
             return;
         }
+    	else {
+    		Command cmd = new Command("!login");
+    		cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
+    		client.ClientConsole.send(cmd);
+    		int status = replyWait();
+    		System.out.println("reply status: "+status);
+    	}
+    	gotoWelcome(event);
+    }
+    
+    @FXML void handleSignUp(ActionEvent event) throws IOException, InterruptedException {
+		Command cmd = new Command("!signUp");
+		cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
+		client.ClientConsole.send(cmd);
+		int status = replyWait();
+		System.out.println("reply status: "+status);
     	gotoWelcome(event);
     }
 
@@ -139,10 +175,7 @@ public class GUIController {
     }
 
     @FXML void debugSend(ActionEvent event) throws InterruptedException {
-		String msg[]= {debugCommandTxt.getText(),debugObjectTxt.getText()};
-    	System.out.println("command: "+msg[0]);
-    	System.out.println("Object: "+msg[1]);
-		client.ClientConsole.send(msg);
+		client.ClientConsole.send(new Command(debugCommandTxt.getText()));
 		int status = replyWait();
 		System.out.println("reply status: "+status);
 		debugObjectTxt.setText(clientMsg);
@@ -153,7 +186,7 @@ public class GUIController {
 		waitLock=1;
 		// wait 10 seconds for reply 
 		for( i=10; i>0 && waitLock==1;i--) {
-            Thread.sleep(100);
+            Thread.sleep(200);
             System.out.print(".");
 		}
 		return i;
@@ -164,7 +197,11 @@ public class GUIController {
 		clientMsg=cmd.msg;
 		if(cmd.obj instanceof Catalog) {
 			System.out.println("recieved catalog from server");
-			((Catalog)cmd.obj).printCatalog();
+			localCatalog=((Catalog)cmd.obj);
+			localCatalog.printCatalog();
+		}
+		else {
+			System.out.println("recieved: <"+cmd.msg+"> from server, obj-"+cmd.obj.toString());
 		}
 		
 		waitLock=0;
