@@ -67,15 +67,15 @@ public class GUIController {
     
     
     /**** Welcome ****/    
-    @FXML private Button loginBtn;
+//    @FXML private Button loginBtn;
 
     /**** Login ****/ 
     @FXML private TextField loginPassTxt;
     @FXML private TextField loginUserTxt;
-    @FXML private Button loginLoginBtn; 
+//    @FXML private Button loginLoginBtn; 
     
     /**** Welcome/Login ****/
-    @FXML private Button catalogBtn;
+//    @FXML private Button catalogBtn;
     @FXML private Text userTxt;
 //	@FXML private ResourceBundle resources;
 //  @FXML private URL location;
@@ -85,7 +85,7 @@ public class GUIController {
     /**** debug ****/
     @FXML private TextField debugCommandTxt;
     @FXML private TextArea debugObjectTxt;
-    @FXML private Button debugSendBtn;
+//    @FXML private Button debugSendBtn;
 
     @FXML void initialize() {
         if(userTxt!=null)

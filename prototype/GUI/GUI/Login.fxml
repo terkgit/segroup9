@@ -16,9 +16,9 @@
             <Image url="@welcomeb.jpg" />
          </image>
       </ImageView>
-      <Button fx:id="catalogBtn" layoutX="183.0" layoutY="396.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Catalog" />
+      <Button layoutX="186.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Catalog" />
       <TextField fx:id="loginUserTxt" layoutX="59.0" layoutY="114.0" prefHeight="25.0" prefWidth="124.0" />
-      <Button fx:id="loginLoginBtn" layoutX="8.0" layoutY="180.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="25.0" prefWidth="174.0" text="Login" />
+      <Button layoutX="8.0" layoutY="180.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="25.0" prefWidth="174.0" text="Login" />
       <TextField editable="false" layoutX="7.0" layoutY="114.0" prefHeight="25.0" prefWidth="46.0" text="User:" />
       <TextField editable="false" layoutX="7.0" layoutY="146.0" prefHeight="25.0" prefWidth="46.0" text="Pass:" />
       <PasswordField fx:id="loginPassTxt" layoutX="59.0" layoutY="146.0" prefHeight="25.0" prefWidth="124.0" />
@@ -27,6 +27,6 @@
             <Font size="10.0" />
          </font>
       </Text>
-      <Button fx:id="loginSignUpBtn" layoutX="8.0" layoutY="215.0" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="25.0" prefWidth="174.0" text="Sign Up" />
+      <Button layoutX="8.0" layoutY="215.0" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="25.0" prefWidth="174.0" text="Sign Up" />
    </children>
 </AnchorPane>

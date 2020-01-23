@@ -18,7 +18,7 @@
          <font>
             <Font size="10.0" />
          </font></Text>
-      <Button fx:id="loginBtn" layoutX="288.0" layoutY="103.0" mnemonicParsing="false" onAction="#gotoLogin" text="Login" />
-      <Button fx:id="catalogBtn" layoutX="183.0" layoutY="396.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Catalog" />
+      <Button layoutX="288.0" layoutY="103.0" mnemonicParsing="false" onAction="#gotoLogin" text="Login" />
+      <Button layoutX="186.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Catalog" />
    </children>
 </AnchorPane>
