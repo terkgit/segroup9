@@ -16,21 +16,16 @@
             <Image url="@welcomeb.jpg" />
          </image>
       </ImageView>
-      <Button layoutX="533.0" layoutY="364.0" mnemonicParsing="false" text="Next" />
-      <Button layoutX="132.0" layoutY="364.0" mnemonicParsing="false" text="Prev" />
-      <Button layoutX="320.0" layoutY="364.0" mnemonicParsing="false" text="Search" />
-      <TableView fx:id="catalogTable" layoutX="72.0" layoutY="26.0" prefHeight="331.0" prefWidth="525.0">
+      <TableView fx:id="cartTable" layoutX="72.0" layoutY="26.0" prefHeight="331.0" prefWidth="525.0">
         <columns>
-          <TableColumn fx:id="catalogTableName" prefWidth="186.0" text="Name" />
-            <TableColumn fx:id="catalogTablePrice" prefWidth="64.0" text="Price" />
-          <TableColumn fx:id="catalogTableAmount" prefWidth="56.0" text="Amount" />
-            <TableColumn fx:id="catalogTablePic" prefWidth="218.0" text="Pic" />
+          <TableColumn fx:id="cartTableName" prefWidth="186.0" text="Name" />
+            <TableColumn fx:id="cartTablePrice" prefWidth="64.0" text="Price" />
         </columns>
       </TableView>
-      <Button layoutX="213.0" layoutY="364.0" mnemonicParsing="false" onAction="#addToCart" text="Add To Cart" />
       <Text fx:id="catalogTxt" layoutX="171.0" layoutY="402.0" strokeType="OUTSIDE" strokeWidth="0.0" />
       <Button layoutX="14.0" layoutY="26.0" mnemonicParsing="false" onAction="#gotoWelcome" text="Home" />
-      <Label layoutX="72.0" layoutY="6.0" prefHeight="17.0" prefWidth="59.0" text="Catalog" />
-      <Button layoutX="403.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCart" text="Cart" />
+      <Button layoutX="291.0" layoutY="364.0" mnemonicParsing="false" text="Remove Item" />
+      <Button layoutX="186.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Catalog" />
+      <Label layoutX="72.0" layoutY="2.0" prefHeight="25.0" prefWidth="77.0" text="Cart" />
    </children>
 </AnchorPane>

@@ -77,7 +77,6 @@ public class EchoServer extends AbstractServer
    */
   public void handleMessageFromClient(Object msg, ConnectionToClient client) {
 	
-	Catalog ctlg=new Catalog();
     if (msg.toString().startsWith("#login "))
     {
       if (client.getInfo("loginID") != null)
@@ -107,13 +106,7 @@ public class EchoServer extends AbstractServer
       }
 
       
-//      this.sendToAllClients(client.getInfo("loginID") + "> " + msg);
       
-      /* client commands are executing by sending !command message 
-       * available commands:
-       * list-catalog
-       * update-id 
-       * */
       Command cmd;
       if(msg instanceof Command) {
     	  cmd=(Command)msg;
@@ -128,6 +121,7 @@ public class EchoServer extends AbstractServer
     	  try {
     		  	String args[] = cmd.msg.trim().split("\\s+");
     		  	Command reply;
+    		  	System.out.println(args[0]+" command");
     		  	switch (args[0]) {
 	  	  			case ("!list"):
 	  	  				//ctlg=(catalog) jdbc.listCatalog();

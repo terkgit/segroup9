@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 
 import classes.*;
@@ -32,6 +33,7 @@ import javafx.scene.Node;
 public class GUIController {
 
 	private static Catalog localCatalog;
+	private static LinkedList<Item> cart;
 	private static String clientMsg;
 	public static String userTxtStr;	
 	public GUIController instance;
@@ -42,6 +44,7 @@ public class GUIController {
 		clientMsg="";		
 		client.ClientConsole.send(new Command("!list"));
 		localCatalog=null;
+		cart=new LinkedList<Item>();
 	}
 
     /**** Catalog ****/
@@ -50,9 +53,16 @@ public class GUIController {
     @FXML private TableColumn<Item, Double> catalogTablePrice;
     @FXML private TableColumn<Item, Integer> catalogTableAmount;
     @FXML private TableColumn<Item, String> catalogTablePic;
-    @FXML private Button catalogNextBtn; 
-    @FXML private Button catalogPrevBtn; 
-    @FXML private Button catalogSearchBtn; 
+//    @FXML private Button catalogNextBtn; 
+//    @FXML private Button catalogPrevBtn; 
+//    @FXML private Button catalogSearchBtn; 
+//    @FXML private Button catalogAddToCartBtn;
+    @FXML private Text catalogTxt;
+    
+    /**** Cart ****/
+	@FXML private TableView<Item> cartTable;
+    @FXML private TableColumn<Item, String> cartTableName;
+    @FXML private TableColumn<Item, Double> cartTablePrice;
 
     
     
@@ -87,7 +97,27 @@ public class GUIController {
 	        catalogTablePic.setCellValueFactory(new PropertyValueFactory<Item, String>("pic"));
 	        catalogTableFill();
         }
+        if(cartTable!=null) {
+        	cartTableName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
+        	cartTablePrice.setCellValueFactory(new PropertyValueFactory<Item, Double>("price"));
+	        cartTableFill();
+        }
     }
+    
+    @SuppressWarnings("unused")private void _Cart_() {}
+    
+    void cartTableFill() {
+    	if(cart==null)
+    		System.out.println("cart is unavailable");
+    	else {
+        	ObservableList<Item> ctl = cartTable.getItems();
+        	cart.forEach((item)->{
+        		ctl.add(item);
+        	});
+    	}
+    } // catalogTableFill
+    
+    @SuppressWarnings("unused")private void _Catalog_() {}
     
     @FXML void addMyItem(ActionEvent event) {
     	catalogTableFill();
@@ -108,15 +138,81 @@ public class GUIController {
     	}
     } // catalogTableFill
     
-    @FXML void gotoCatalog(ActionEvent event) throws IOException {
-        URL url = getClass().getResource("Catalog.fxml");
-        AnchorPane pane = FXMLLoader.load( url );
-        Scene scene = new Scene( pane );
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setTitle("Catalog");
-        stage.setScene(scene);
+    @FXML void addToCart(ActionEvent event) throws IOException {
+    	Item selected=catalogTable.getSelectionModel().getSelectedItem();
+    	if (selected==null) {
+    		System.out.println("select an item");
+    		catalogTxt.setText("select an item");
+    	}
+    	else {
+    		System.out.println(selected.getName());
+    		catalogTxt.setText(selected.getName());
+    		cart.add(selected);
+    	}
     }
 
+    @FXML void gotoCart(ActionEvent event) throws IOException {
+	    URL url = getClass().getResource("Cart.fxml");
+	    AnchorPane pane = FXMLLoader.load( url );
+	    Scene scene = new Scene( pane );
+	    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    stage.setTitle("Cart");
+	    stage.setScene(scene);
+	}
+
+    @FXML void gotoCatalog(ActionEvent event) throws IOException {
+	    URL url = getClass().getResource("Catalog.fxml");
+	    AnchorPane pane = FXMLLoader.load( url );
+	    Scene scene = new Scene( pane );
+	    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    stage.setTitle("Catalog");
+	    stage.setScene(scene);
+	}
+
+	@SuppressWarnings("unused")private void __Login__() {}
+	
+	@FXML void handleLogin(ActionEvent event) throws IOException, InterruptedException {
+		String usertxt=loginUserTxt.getText();
+	    userTxtStr=usertxt;
+		if(usertxt.equals("admin")) {    	
+	    	URL url = getClass().getResource("debug.fxml");
+	        AnchorPane pane = FXMLLoader.load( url );
+	        Scene scene = new Scene( pane );
+	        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	        stage.setScene(scene);
+	        return;
+	    }
+		else {
+			Command cmd = new Command("!login");
+			cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
+			client.ClientConsole.send(cmd);
+			int status = replyWait();
+			System.out.println("reply status: "+status);
+		}
+		gotoWelcome(event);
+	}
+
+	@FXML void handleSignUp(ActionEvent event) throws IOException, InterruptedException {
+		Command cmd = new Command("!signUp");
+		cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
+		client.ClientConsole.send(cmd);
+		int status = replyWait();
+		System.out.println("reply status: "+status);
+		gotoWelcome(event);
+	}
+
+	@FXML void gotoWelcome(ActionEvent event) throws IOException{
+		URL url = getClass().getResource("Welcome.fxml");
+	    AnchorPane pane = FXMLLoader.load( url );
+	    Scene scene = new Scene( pane );
+	    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    stage.setTitle("Welcome");
+	    stage.setScene(scene);
+	    stage.show();
+	}
+
+	@SuppressWarnings("unused")private void __Welcome__() {}
+    
     @FXML void gotoLogin(ActionEvent event) throws IOException{
     	URL url = getClass().getResource("Login.fxml");
         AnchorPane pane = FXMLLoader.load( url );
@@ -126,47 +222,7 @@ public class GUIController {
         stage.setScene(scene);
     }
     
-    @FXML void handleLogin(ActionEvent event) throws IOException, InterruptedException {
-    	String usertxt=loginUserTxt.getText();
-        userTxtStr=usertxt;
-    	if(usertxt.equals("admin")) {    	
-        	URL url = getClass().getResource("debug.fxml");
-            AnchorPane pane = FXMLLoader.load( url );
-            Scene scene = new Scene( pane );
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            return;
-        }
-    	else {
-    		Command cmd = new Command("!login");
-    		cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
-    		client.ClientConsole.send(cmd);
-    		int status = replyWait();
-    		System.out.println("reply status: "+status);
-    	}
-    	gotoWelcome(event);
-    }
-    
-    @FXML void handleSignUp(ActionEvent event) throws IOException, InterruptedException {
-		Command cmd = new Command("!signUp");
-		cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
-		client.ClientConsole.send(cmd);
-		int status = replyWait();
-		System.out.println("reply status: "+status);
-    	gotoWelcome(event);
-    }
-
-    @FXML void gotoWelcome(ActionEvent event) throws IOException{
-    	URL url = getClass().getResource("Welcome.fxml");
-        AnchorPane pane = FXMLLoader.load( url );
-        Scene scene = new Scene( pane );
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setTitle("Welcome");
-        stage.setScene(scene);
-        stage.show();
-    }
-    
-
+    @SuppressWarnings("unused")private void _DEBUG_() {}
 
     @FXML void debugRefresh(ActionEvent event) {
 		System.out.println("msg after send"+clientMsg);
