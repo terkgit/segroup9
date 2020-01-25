@@ -32,11 +32,11 @@ import javafx.scene.Node;
 
 public class GUIController {
 
+	/** Client Static Variables  **/
 	private static Catalog localCatalog;
 	private static LinkedList<Item> cart;
 	private static String clientMsg;
-	public static String userTxtStr;	
-	public GUIController instance;
+	private static String userTxtStr;	
 	private static int waitLock=0;
 
 	public static void initStatics(){
@@ -75,6 +75,9 @@ public class GUIController {
     @FXML private TextField loginPassTxt;
     @FXML private TextField loginUserTxt;
 //    @FXML private Button loginLoginBtn; 
+    
+    /**** SingUp ****/     
+    @FXML private TextField signupTxt;
     
     /**** Welcome/Login ****/
 //    @FXML private Button catalogBtn;
@@ -238,15 +241,6 @@ public class GUIController {
 		gotoWelcome(event);
 	}
 
-	@FXML void handleSignUp(ActionEvent event) throws IOException, InterruptedException {
-		Command cmd = new Command("!signUp");
-		cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
-		client.ClientConsole.send(cmd);
-		int status = replyWait();
-		System.out.println("reply status: "+status);
-		gotoWelcome(event);
-	}
-
 	@FXML void gotoLogin(ActionEvent event) throws IOException{
 		URL url = getClass().getResource("Login.fxml");
 	    AnchorPane pane = FXMLLoader.load( url );
@@ -255,7 +249,33 @@ public class GUIController {
 	    stage.setTitle("Login");
 	    stage.setScene(scene);
 	}
+	
+	@SuppressWarnings("unused")private void __Signup__() {}
 
+
+	@FXML void gotoSignup(ActionEvent event) throws IOException{
+		URL url = getClass().getResource("Signup.fxml");
+	    AnchorPane pane = FXMLLoader.load( url );
+	    Scene scene = new Scene( pane );
+	    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    stage.setTitle("Signup");
+	    stage.setScene(scene);
+	}
+	
+	@FXML void handleSignUp(ActionEvent event) throws IOException, InterruptedException {
+		Command cmd = new Command("!signUp");
+		cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
+		client.ClientConsole.send(cmd);
+		int status = replyWait();
+		System.out.println("reply status: "+status);
+		gotoSignup(event);
+	}
+
+	@FXML void signupVarify(ActionEvent event){
+		System.out.println("TODO: signupVarify implement");
+//		signupTxt.setText("varify unavailable");
+	}
+	
 	@SuppressWarnings("unused")private void __Welcome__() {}
     
     @FXML void gotoWelcome(ActionEvent event) throws IOException{
@@ -286,9 +306,9 @@ public class GUIController {
 	private int replyWait() throws InterruptedException {
 		int i;
 		waitLock=1;
-		// wait 10 seconds for reply 
+		// wait 3 seconds for reply 
 		for( i=10; i>0 && waitLock==1;i--) {
-            Thread.sleep(200);
+            Thread.sleep(300);
             System.out.print(".");
 		}
 		return i;
