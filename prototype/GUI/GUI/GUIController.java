@@ -130,6 +130,19 @@ public class GUIController {
 	    stage.setTitle("Cart");
 	    stage.setScene(scene);
 	}
+    
+    @FXML void gotoOrder(ActionEvent event) throws IOException {
+	    if(cart.size()<=0) {
+	    	System.out.println("TODO cart empty msg");
+	    	return;
+	    }
+    	URL url = getClass().getResource("Order.fxml");
+	    AnchorPane pane = FXMLLoader.load( url );
+	    Scene scene = new Scene( pane );
+	    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    stage.setTitle("Order");
+	    stage.setScene(scene);
+	}
 
 	@SuppressWarnings("unused")private void _Catalog_() {}
     
