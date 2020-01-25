@@ -75,50 +75,20 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient(Object msg, ConnectionToClient client) {
-	
-    if (msg.toString().startsWith("#login "))
-    {
-      if (client.getInfo("loginID") != null)
-      {
-        try
-        {
-          client.sendToClient("You are already logged in.");
-        }
-        catch (IOException e)
-        {
-        }
-        return;
-      }
-      client.setInfo("loginID", msg.toString().substring(7));
-    }
-    else 
-    {
-      if (client.getInfo("loginID") == null)
-      {
-        try
-        {
-          client.sendToClient("You need to login before you can chat.");
-          client.close();
-        }
-        catch (IOException e) {}
-        return;
-      }
+	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
-      
-      
-      Command cmd;
-      if(msg instanceof Command) {
+		Command cmd;
+		if(msg instanceof Command) {
     	  cmd=(Command)msg;
     	  System.out.println("Message received: " + cmd.msg + " from \"" + 
       				client.getInfo("loginID") + "\" " + client);
-      }
-      else {
+		}
+		else {
     	  System.out.println("no Command recieved");
     	  return;
-      }
-      if(cmd.msg.startsWith("!")) {
-    	  try {
+		}
+		if(cmd.msg.startsWith("!")) {
+			try {
     		  	String args[] = cmd.msg.trim().split("\\s+");
     		  	Command reply;
     		  	System.out.println(args[0]+" command");
@@ -148,6 +118,22 @@ public class EchoServer extends AbstractServer
 		  	  			reply.obj=cmd.obj;
 		  	  			client.sendToClient(reply);
 				  	break;
+		
+		  	  		case ("!editItem"):
+		  	  			System.out.println("TODO! !editItem");
+		  	  			((Item)cmd.obj).printItem();
+		  	  			reply=new Command("TODO! !editItem ");
+		  	  			reply.obj=cmd.obj;
+		  	  			client.sendToClient(reply);
+				  	break;
+		
+		  	  		case ("!addItem"):
+		  	  			System.out.println("TODO! !addItem");
+		  	  			((Item)cmd.obj).printItem();
+		  	  			reply=new Command("TODO! !addItem ");
+		  	  			reply.obj=cmd.obj;
+		  	  			client.sendToClient(reply);
+				  	break;
 				  	
 	  			} // switch
     	  } // try
@@ -158,7 +144,6 @@ public class EchoServer extends AbstractServer
 				e.printStackTrace();
     	  } // catch
       } // if
-    }
 }
 
   /**
@@ -319,7 +304,7 @@ public class EchoServer extends AbstractServer
     String msg = "A Client has connected";
     System.out.println(msg);
     try {
-		client.sendToClient("successfuly connected to server ");
+		client.sendToClient(new Command("successfuly connected to server "));
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
