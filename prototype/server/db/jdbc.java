@@ -113,6 +113,7 @@ public class jdbc {
 					rs.moveToInsertRow();
 					rs.updateString("username", user.getUserName());
 					rs.updateString("password", user.getPassword());
+					rs.updateString("permissionLevel", user.getPermLevel());
 					rs.insertRow();
 					result = "Success";
 					
@@ -190,7 +191,7 @@ public class jdbc {
 				User user = (User) cmd.obj;
 				String sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
-				if(rs.last()) {
+				if(!rs.last()) {
 					result.msg = "wrong username";
 					return result;
 				}
