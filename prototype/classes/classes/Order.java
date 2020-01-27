@@ -1,25 +1,31 @@
 package classes;
 
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;  
+import java.util.Date; 
 import java.util.LinkedList;
+
+import db.jdbc;
 
 public class Order implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private signedUser user;
+	private User user;
 	private LinkedList<Item> orderList;
-	private DateTimeFormatter orderDate;
-	private DateTimeFormatter deliveryDate;
+	private  Date orderDate;
+	private  Date deliveryDate;
 	private String card;
 	private static String details ;
 	private static  double price;
+	private String status;
 	
 	public Order() {
 		user=null;
 		orderList=new LinkedList<Item>();
 		card="";
+		status="Pending";
+		
 	}
 	
 	public LinkedList<Item> getOrderList(){
@@ -29,7 +35,7 @@ public class Order implements Serializable {
 	return card;
 	}
 
-	public signedUser getUser() {
+	public User getUser() {
 	return user;
 	}
 
@@ -46,6 +52,7 @@ public class Order implements Serializable {
 			details += item.getDetails();
 			price+=item.getPrice();
 		});
+		price = Math.round(price);
 		details+= "Total Price is: "+price+"\n";
 		if(!card.equals(""))
 			details+= card;
@@ -53,12 +60,16 @@ public class Order implements Serializable {
 		
 	}
 
-	public DateTimeFormatter getOrderDate() {
+	public Date getOrderDate() {
 		return orderDate;
 	}
 
-	public DateTimeFormatter getDeliveryDate() {
+	public Date getDeliveryDate() {
 		return deliveryDate;
+	}
+
+	public String getStatus() {
+		return status;
 	}
 
 	public void setOrdreList(LinkedList<Item> _list) {
@@ -69,19 +80,23 @@ public class Order implements Serializable {
 		card=_card;
 		}
 	
-	public void setUser(signedUser _user) {
+	public void setUser(User _user) {
 		user=_user;
 		}
 	
 	public void setPrice(double _price) {
 		price=_price;
 	}
-	public void setOrderDate(DateTimeFormatter orderDate) {
+	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
 	}
 
-	public void setDeliveryDate(DateTimeFormatter deliveryDate) {
+	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String toString() {
@@ -106,17 +121,30 @@ public class Order implements Serializable {
 	public static void main(String args[]) {
 		Item item1 = new Item("f1",11.2,"red",10,"pic1",1,"shop1");
 		Item item2 = new Item("f2",12.2,"blue",20,"pic2",2,"shop2");
-		Item item3 = new Item("f3",13.2,"green",30,"pic3",3,"shop3");
+//		Item item3 = new Item("f3",13.2,"green",30,"pic3",3,"shop3");
 		Order order = new Order();
 		order.orderList.add(item1);
 		order.orderList.add(item2);
-		order.orderList.add(item3);
+//		order.orderList.add(item3);
 		
 		System.out.println(order.getDetails());
-		
-		String str = order.toString();
-		
+		String str = order.toString();	
 		order.fromString(str);
+		
+//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
+		order.setOrderDate(new Date());
+		order.setDeliveryDate(new Date());
+		order.setUser(new User());
+		order.user.setUserName("malki");
+		order.setStatus("Canceled");
+		
+		Command cmd = new Command("!order");
+		cmd.obj=order;
+		jdbc.cancelOrder(cmd);
+		
+		
+		
+		
 	}
 
 }
