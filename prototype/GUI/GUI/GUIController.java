@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -35,6 +36,7 @@ public class GUIController {
 	/** Client Static Variables  **/
 	private static Catalog localCatalog;
 	private static LinkedList<Item> cart;
+	private static LinkedList<Item> searchList;
 	private static String clientMsg;
 	private static String userTxtStr;	
 	private static int waitLock=0;
@@ -55,6 +57,10 @@ public class GUIController {
     @FXML private TableColumn<Item, Integer> catalogTableAmount;
     @FXML private TableColumn<Item, String> catalogTablePic;
     @FXML private Text catalogTxt;
+    @FXML private TextField catalogMinPriceTF;
+    @FXML private TextField catalogMaxPriceTF;
+    @FXML private ChoiceBox<String> catalogColorChoice;
+    @FXML private TextField catalogShopTF;
 
     /**** CatalogM ****/
     @FXML private TextField catalogMName;
@@ -107,6 +113,12 @@ public class GUIController {
         	cartTableName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
         	cartTablePrice.setCellValueFactory(new PropertyValueFactory<Item, Double>("price"));
 	        cartTableFill();
+        }
+        if(catalogColorChoice!=null)
+        {
+        	catalogColorChoice.getItems().add("Red");
+        	catalogColorChoice.getItems().add("Blue");
+        	catalogColorChoice.getItems().add("Green");
         }
     }
     
@@ -166,7 +178,49 @@ public class GUIController {
     	}
     } // catalogTableFill
     
-    @FXML void addToCart(ActionEvent event) throws IOException {
+  
+    void catalogTableFillSearch() {
+    	if(searchList==null)
+    		System.out.println("search unavaileable");
+    	else {
+    		catalogTable.getItems().clear();
+        	ObservableList<Item> ctl = catalogTable.getItems();
+        	searchList.forEach((item)->{
+        		ctl.add(item);
+        	});
+    	}
+    } // catalogTableFill
+    
+    @FXML void catalogSearch() {
+		Filter filter = new Filter();
+		double min=-1;
+		double max=-1;
+		if( !(catalogMinPriceTF.getText().equals("")) ) {
+			min=Double.valueOf(catalogMinPriceTF.getText());
+		}
+		if( !(catalogMaxPriceTF.getText().equals("")) ) {
+			max=Double.valueOf(catalogMaxPriceTF.getText());
+		}
+		
+		System.out.println("price: "+min+"-"+max);
+	    System.out.println("color: "+catalogColorChoice.getValue());
+		System.out.println("shop: "+catalogShopTF.getText());
+	
+		filter.setFilterPrice(min,max);
+		if( !(catalogShopTF.getText().equals("")) )
+			filter.setFilterShop(catalogShopTF.getText());
+	
+		if( catalogShopTF.getText()!=null )
+			filter.setFilterColor(catalogColorChoice.getValue());
+		
+		searchList=localCatalog.search(filter);
+		searchList.forEach((item)->{
+			item.printItem();
+		});
+		catalogTableFillSearch();
+	}
+
+	@FXML void addToCart(ActionEvent event) throws IOException {
     	Item selected=catalogTable.getSelectionModel().getSelectedItem();
     	if (selected==null) {
     		System.out.println("select an item");
@@ -229,8 +283,8 @@ public class GUIController {
 		int status = replyWait();
 		System.out.println("reply status: "+status);
     }
-
-	@SuppressWarnings("unused")private void __Login__() {}
+    
+    @SuppressWarnings("unused")private void __Login__() {}
 	
 	@FXML void handleLogin(ActionEvent event) throws IOException, InterruptedException {
 		String usertxt=loginUserTxt.getText();

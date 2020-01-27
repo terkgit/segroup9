@@ -27,4 +27,13 @@ public class Catalog implements Serializable {
 			itemList.get(i++).printItem();
 		}	
 	}
+	
+	public LinkedList<Item> search(Filter filter) {
+		LinkedList<Item> searchList = new LinkedList<Item>();
+		itemList.forEach((item)->{
+			if(filter.inRange(item))
+				searchList.add(item);
+    	});
+		return searchList;
+	}
 }
