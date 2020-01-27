@@ -3,12 +3,12 @@
 
 ## Server
 
-- [ ] add item to catalog
-- [ ] update item in catalog
-- [ ] get catalog from JDBC
+- [x] add item to catalog
+- [x] update item in catalog
+- [x] get catalog from JDBC
 - [ ] sales shop/general
-- [ ] sign up
-- [ ] sign in
+- [x] sign up
+- [x] sign in
 - [ ] order
 - [ ] get orders from JDBC of user
 
