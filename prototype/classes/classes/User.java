@@ -16,23 +16,23 @@ public class User implements Serializable {
 			ADMIN
 	}
 	
-	private int id;
+	//private int id;
 	private String userName;
 	private String password;
-	private permissionLevel permission;
-	private String phone;
+	//private permissionLevel permission;
+	//private String phone;
 	
-	public int getId() {return id;}
-	public String getUserNane() {return userName;}
+	//public int getId() {return id;}
+	public String getUserName() {return userName;}
 	public String getPassword() {return password;}
-	public permissionLevel getPermissionLevel() {return permission;}
-	public String getPhone() {return phone;}
+	///public permissionLevel getPermissionLevel() {return permission;}
+	//public String getPhone() {return phone;}
 	
-	public void setId(int _id) {id=_id;}
+	//public void setId(int _id) {id=_id;}
 	public void setUserName(String _userName) {userName=_userName;}
 	public void setPassword(String _password) {password=_password;}
-	public void setPermissionLevel(Object _permission) {permission=(permissionLevel) _permission;}
-	public void setPhone(String _phone) {phone=_phone;};
+	//public void setPermissionLevel(Object _permission) {permission=(permissionLevel) _permission;}
+	//public void setPhone(String _phone) {phone=_phone;};
 		
 }
 

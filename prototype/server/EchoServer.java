@@ -3,6 +3,7 @@
 // license found at www.lloseng.com 
 
 import java.io.*;
+import java.util.LinkedList;
 
 import javax.net.ssl.SSLException;
 
@@ -29,6 +30,8 @@ public class EchoServer extends AbstractServer
 		BOSS,
 		ADMIN
 	}
+	
+	LinkedList<signedUser> userList;
 	
   /**
    * The default port to listen on.
@@ -72,81 +75,114 @@ public class EchoServer extends AbstractServer
   /**
    * This method handles any messages received from the client.
    *
-   * @param msg The message received from the client.
+   * @param obj The Object received from the client.
    * @param client The connection from which the message originated.
+ * @throws IOException 
+ * @throws SSLException 
    */
-  public void handleMessageFromClient(Object msg, ConnectionToClient client) {
+  public void handleMessageFromClient(Object obj, ConnectionToClient client){
+	  if(obj instanceof String) {
+		  if (obj.toString().startsWith("#login "))
+		    {
+		      if (client.getInfo("loginID") != null)
+		      {
+		        try
+		        {
+		          client.sendToClient("You are already logged in.");
+		        }
+		        catch (IOException e)
+		        {
+		        }
+		        return;
+		      }
+		      client.setInfo("loginID", obj.toString().substring(7));
+		    }
+		    else 
+		    {
+		      if (client.getInfo("loginID") == null)
+		      {
+		        try
+		        {
+		          client.sendToClient("You need to login before you can chat.");
+		          client.close();
+		        }
+		        catch (IOException e) {}
+		        return;
+		      }
 	
-	Catalog ctlg=new Catalog();
-    if (msg.toString().startsWith("#login "))
-    {
-      if (client.getInfo("loginID") != null)
-      {
-        try
-        {
-          client.sendToClient("You are already logged in.");
-        }
-        catch (IOException e)
-        {
-        }
-        return;
-      }
-      client.setInfo("loginID", msg.toString().substring(7));
-    }
-    else 
-    {
-      if (client.getInfo("loginID") == null)
-      {
-        try
-        {
-          client.sendToClient("You need to login before you can chat.");
-          client.close();
-        }
-        catch (IOException e) {}
-        return;
-      }
-
-      System.out.println("Message received: " + msg + " from \"" + 
-        client.getInfo("loginID") + "\" " + client);
-//      this.sendToAllClients(client.getInfo("loginID") + "> " + msg);
-      
-      /* client commands are executing by sending !command message 
-       * available commands:
-       * list-catalog
-       * update-id 
-       * */
-      if(msg.toString().startsWith("!")) {
-    	  try {
-    		  	String args[] = msg.toString().trim().split("\\s+");
-    		  	switch (args[0]) {
-	  	  			case ("!list"):
-	  	  				//ctlg=(catalog) jdbc.listCatalog();
-	  	  				//ctlg.printCatalog();
-	  	  				client.sendToClient(jdbc.listCatalog());
-				  	break;
-		
-		  	  		case ("!updatePrice"):
-		  	  			client.sendToClient(jdbc.updatePrice(args));
-				  	break;
-				  	
-	  			} // switch
-    	  } // try
-    	  catch (SSLException e) {
-				e.printStackTrace();
-    	  } // catch
-    	  catch (IOException e) {
-				e.printStackTrace();
-    	  } // catch
-      } // if
-    }
+		      System.out.println("Message received: " + obj + " from \"" + 
+		        client.getInfo("loginID") + "\" " + client);
+		    }
+	  }
+	  
+	Command cmd = new Command();
+	cmd.msg=(String) obj;
+//	cmd = (Command) obj;
+	if(cmd.msg.equals("!list")) {
+		try {
+			client.sendToClient(jdbc.listCatalog());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	else if(cmd.msg.equals("!editItem")) {
+		try {
+			client.sendToClient(jdbc.updateItemInDataBase(cmd.obj));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	else if(cmd.msg.equals("!addItem")) {
+		try {
+			client.sendToClient(jdbc.addNewObjectToDataBase(cmd.obj));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	else if(cmd.msg.equals("!signUp")) {
+		try {
+			client.sendToClient(jdbc.signUp(cmd));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	else if(cmd.msg.equals("!validate")) {
+		try {
+			client.sendToClient(jdbc.validate(cmd));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	else if(cmd.msg.equals("!login")) {
+		if(userList.contains((signedUser)cmd.obj)) {
+			cmd.msg="Alredy signed in";
+			cmd.obj=(signedUser)cmd.obj;
+		}
+		else {
+			cmd=jdbc.signIn(cmd);
+			userList.add((signedUser)cmd.obj);
+		}
+		try {
+			client.sendToClient(cmd);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
 
   /**
    * This method handles all data coming from the UI
    *
    * @param message The message from the UI
+ * @throws SSLException 
    */
-  public void handleMessageFromServerUI(String message)
+  public void handleMessageFromServerUI(String message) throws SSLException
   {
     if (message.charAt(0) == '#')
     {
@@ -166,43 +202,35 @@ public class EchoServer extends AbstractServer
    * @param message String from the server console.
  * @throws SSLException 
    */
-  private void runCommand(String message) 
+  private void runCommand(String message) throws SSLException 
   {
     // run commands
     // a series of if statements
 	  
 	  if(message.equals("#additem")) {
+		  Command cmd= new Command("add item");
 		  Item newItem = new Item();
-		  newItem.setId(7);
+		  newItem.setId(8);
 		  newItem.setName("flower11");
-		  newItem.setPrice(22.32);
-		  newItem.setAmount(47);
-		  newItem.setShop("KukurikuShop");
-		  
-		  try {
-			jdbc.addNewObjectToDataBase(newItem);
-		} catch (SSLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		  newItem.setPrice(20.99);
+		  newItem.setAmount(33);
+		  newItem.setShop("EchoShop");
+		  cmd.obj=newItem;
+		  cmd.msg=jdbc.addNewObjectToDataBase(cmd.obj);
+		  System.out.println(cmd.msg);
 	  }
 	  
-	  if(message.equals("#adduser")) {
-		  signedUser sUser = new signedUser();
-		  sUser.setId(326869716);
-		  sUser.setPassword("123456");
-//		  sUser.setPermissionLevel(permissionLevel.ADMIN);
-		  sUser.setUserName("Feodor");
-		  sUser.setPhone("0548835483");
-		  
-		  try {
-			jdbc.addNewObjectToDataBase(sUser);
-		} catch (SSLException e) {
-			// TODO Auto-generated catch block
-			
-			e.printStackTrace();
-		}
-		  
+	  if(message.equals("#validate")) {
+		  Command cmd= new Command("validate");
+		  signedUser flag = new signedUser();
+		  flag.setUserName("georg");
+		  flag.setPassword("4554");
+		  flag.setName("georgi");
+		  flag.setId(777777777);
+		  flag.setCreditCard(1478523636);
+		  cmd.obj=flag;
+		  cmd=jdbc.validate(cmd);
+		  System.out.println(cmd.msg);
 	  }
 	  
 
