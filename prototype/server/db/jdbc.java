@@ -72,51 +72,60 @@ public class jdbc {
 		return reply;
 	}
 	
-	public static void addNewObjectToDataBase(Object obj) throws SSLException {
+	public static String addNewObjectToDataBase(Object obj){
 		Connection conn = null;
 		Statement stmt = null;
+		String result = null;
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = null;
+			String sql;
+//			*********ADD NEW ITEM TO CATALOG*********
 			if(obj instanceof Item) {
-				String sql = "SELECT * FROM `Catalog`";
-				Item newItem = (Item) obj;
+				sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+((Item) obj).getName()+"' AND `shop` LIKE '"+((Item) obj).getShop()+"'";
 				rs = stmt.executeQuery(sql);
-				rs.moveToInsertRow();
-				rs.updateInt("id", newItem.getId());
-				rs.updateString("name", newItem.getName());
-				rs.updateDouble("price", newItem.getPrice());
-				rs.updateString("shop", newItem.getShop());
-				rs.updateInt("amount", newItem.getAmount());
-				rs.insertRow();
-				
-				
+				if(rs.last())
+					result = "alredy exists";
+				else {
+					sql = "SELECT * FROM `Catalog`";
+					rs = stmt.executeQuery(sql);
+					rs.moveToInsertRow();
+					rs.updateInt("id", ((Item) obj).getId());
+					rs.updateString("name", ((Item) obj).getName());
+					rs.updateDouble("price", ((Item) obj).getPrice());
+					rs.updateString("shop", ((Item) obj).getShop());
+					rs.updateInt("amount", ((Item) obj).getAmount());
+					rs.insertRow();
+					result = "succes";
+				}
 			}
+//			*********ADD NEW USER TO DATABASE*********
 			if(obj instanceof User) {
-				String sql = "SELECT * FROM `Users`";
-				signedUser sUser = new signedUser();
-				sUser=(signedUser) obj;
+				sql = "SELECT * FROM Users WHERE username LIKE '" + ((User) obj).getUserName()+"'";
 				rs = stmt.executeQuery(sql);
-				rs.moveToInsertRow();
-				rs.updateInt("id",sUser.getId());
-				rs.updateString("name", sUser.getUserNane());
-				rs.updateString("password", sUser.getPassword());
-//			  	rs.updateObject("permission", sUser.getPermissionLevel());
-				rs.updateString("phone", sUser.getPhone());
-				rs.insertRow();
+				if(rs.last()) 		//check if user name already exist
+					result = "alredy exists";
+				else{
+					rs.moveToInsertRow();
+					rs.updateString("username", ((User) obj).getUserName());
+					rs.updateString("password", ((User) obj).getPassword());
+					rs.insertRow();
+					result = "succes";
+					
+				}
 			}
 			rs.close();
 			stmt.close();
 			conn.close();
 		} 
 		catch (SQLException se) {
-//			se.printStackTrace();
-//			System.out.println("SQLException: " + se.getMessage());
-//            System.out.println("SQLState: " + se.getSQLState());
-//            System.out.println("VendorError: " + se.getErrorCode());
-			System.out.println("Object alredy exist in DATABASE");
+			se.printStackTrace();
+			System.out.println("SQLException: " + se.getMessage());
+            System.out.println("SQLState: " + se.getSQLState());
+            System.out.println("VendorError: " + se.getErrorCode());
+			//System.out.println("Object already exist in DATABASE");
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -132,35 +141,70 @@ public class jdbc {
 				se.printStackTrace();
 			}
 		}
-		//return obj;
+		return result;
 	}
 
-	public static String setPriceId(String[] args) throws SSLException {
-		return "";
-	}
-
-	private static String updatePriceId(int price, int id) {
+	public static Command updateItemInDataBase(Object obj) {
 		Connection conn = null;
 		Statement stmt = null;
-		String result="";
+		Command result=new Command();
+		result.obj=obj;
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-
-			String sql = "SELECT id, price FROM Catalog WHERE id = "+id;
-			ResultSet rs = stmt.executeQuery(sql);
-			if(!rs.last()) {
-				result = String.format("product %d not found",id);
+			ResultSet rs = null;
+			
+//			*********VALIDATE USER*********
+			if(obj instanceof signedUser) {;
+				String sql = "SELECT * FROM Users WHERE username LIKE '" + ((signedUser) obj).getUserName()+"'";
+				rs = stmt.executeQuery(sql);
+				rs.last();
+				String pass=rs.getString("password");
+				if(!pass.equals(((signedUser) obj).getPassword()))
+					result.msg = "wrong password";
+				else {
+					rs.updateString("name", ((signedUser) obj).getName());
+					rs.updateInt("id", ((signedUser) obj).getId());
+					rs.updateInt("credit card", ((signedUser) obj).getCreditCard());
+					rs.updateRow();
+					result.msg = "validated";
+				}
 			}
-			else {
-				rs.updateInt("price", price);
-				rs.updateRow();	
-				result= String.format("product %d price updated to %d",id,price);;
+//			*********UPDATE ITEM IN CATALOG*********
+			if(obj instanceof Item) {
+				String sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+((Item) obj).getName()+"' AND `shop` LIKE '"+((Item) obj).getShop()+"'";
+				rs = stmt.executeQuery(sql);
+				rs.last();
+				rs.updateDouble("price", ((Item) obj).getPrice());
+				rs.updateInt("amount", ((Item) obj).getAmount());
+				rs.updateRow();
+				result.msg = "updated";
 			}
+//			*********SIGN IN*********
+			if(obj instanceof User) {
+				String sql = "SELECT * FROM Users WHERE username LIKE '" + ((User) obj).getUserName()+"'";
+				rs = stmt.executeQuery(sql);
+				if(rs.last()) {
+					result.msg = "wrong username";
+					return result;
+				}
+				String pass=rs.getString("password");
+				if(!pass.equals(((User) obj).getPassword()))
+					result.msg = "wrong password";
+				else {
+					signedUser sUser = new signedUser();
+					sUser.setUserName(((User) obj).getUserName());
+					sUser.setPassword(((User) obj).getPassword());
+					result.obj=sUser;
+					result.msg="Log In Succes";
+				}
+			}
+			
+			rs.close();
 			stmt.close();
 			conn.close();
-		} 
+		}
 		catch (SQLException se) {
 			se.printStackTrace();
 			System.out.println("SQLException: " + se.getMessage());
@@ -170,7 +214,7 @@ public class jdbc {
 		catch (Exception e) {
 			e.printStackTrace();
 		} 
-		finally {
+		finally { 
 			try {
 				if (stmt != null)
 					stmt.close();
@@ -181,33 +225,23 @@ public class jdbc {
 				se.printStackTrace();
 			}
 		}
+		
 		return result;
 	}
-
-
-	public static String setPriceName(String str) throws SSLException {
-		String result="setPriceName "+str;
-		System.out.println(result);		
-		return result;
+	
+	public static Command signUp(Command cmd) {
+		Command flag = new Command(cmd.msg, cmd.obj);
+		flag.msg = addNewObjectToDataBase(cmd.obj);
+		return flag;
 	}
-
-	public static Command updatePrice(String[] args) {
-		String result = "setPriceId: unknown error!\n";
-		int id=-1;
-		int price=-1;
-		
-		if(args.length!=3)
-			return new Command("illegal params (usage: !updatePrice <ID> <PRICE>)");
-		
-		result="set price to: "+args[1]+" for id: "+args[2];
-		id=Integer.parseInt(args[1]);
-		price=Integer.parseInt(args[2]);
-		if(id<=0||price<=0)
-			return new Command("illegal params (usage: !updatePrice <ID> <PRICE>)");
-		
-		System.out.println("price:" + price + " id:" + id);
-		result = updatePriceId(price, id);
-		System.out.println("updatePriceId result: "+result);
-		return new Command(result);
+	
+	public static Command signIn(Command cmd) {
+		return updateItemInDataBase(cmd.obj);
 	}
+	
+	public static Command validate(Command cmd) {
+		return updateItemInDataBase(cmd.obj);
+	}
+	
+
 }
