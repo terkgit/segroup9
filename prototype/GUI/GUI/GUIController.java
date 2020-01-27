@@ -35,6 +35,8 @@ public class GUIController {
 
 	/** Client Static Variables  **/
 	private static Catalog localCatalog;
+	private static Order localOrder;
+	private static User localUser;
 	private static LinkedList<Item> cart;
 	private static LinkedList<Item> searchList;
 	private static String clientMsg;
@@ -47,7 +49,9 @@ public class GUIController {
 		clientMsg="";		
 		client.ClientConsole.send(new Command("!list"));
 		localCatalog=null;
+		localUser=(User)(new User());
 		cart=new LinkedList<Item>();
+	    localOrder=new Order();
 	}
 
     /**** Catalog ****/
@@ -149,6 +153,18 @@ public class GUIController {
 	    	System.out.println("TODO cart empty msg");
 	    	return;
 	    }
+	    
+	    if(localUser instanceof User) {
+	    	System.out.println(localUser.getUserName()+" signed");
+		    localOrder.setUser((User)localUser);
+	    }
+	    else {
+	    	System.out.println(localUser.getUserName()+" is a Guest");
+	    	System.out.println("");
+	    }
+	    
+	    localOrder.setOrdreList(cart);
+	    
     	URL url = getClass().getResource("Order.fxml");
 	    AnchorPane pane = FXMLLoader.load( url );
 	    Scene scene = new Scene( pane );
@@ -257,7 +273,7 @@ public class GUIController {
 		double _price=Double.valueOf(catalogMPrice.getText());
 		int _amount=Integer.parseInt(catalogMAmount.getText());
 		String _pic=catalogMPic.getText();
-    	Item item = new Item(_name,_price,_amount,_pic);
+    	Item item = new Item(_name,_price,"color",_amount,_pic);
     	if (selected==null) {
     		System.out.println("select an item");
     		catalogTxt.setText("select an item");
@@ -275,7 +291,7 @@ public class GUIController {
 		int _amount=Integer.parseInt(catalogMAmount.getText());
 		String _pic=catalogMPic.getText();
 		
-    	Item item = new Item(_name,_price,_amount,_pic);
+    	Item item = new Item(_name,_price,"color",_amount,_pic);
 	    
     	System.out.println("add item: "+item.stringItem());
 		catalogTxt.setText("add request to item: "+item.stringItem());
@@ -306,7 +322,9 @@ public class GUIController {
 			cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
 			client.ClientConsole.send(cmd);
 			int status = replyWait();
-			System.out.println("reply status: "+status);
+			System.out.println("reply recieved: "+(status!=0));
+			if(reply.msg.equals("Log In Success"))
+				localUser=(User)cmd.obj;
 		}
 		gotoWelcome(event);
 	}
@@ -376,9 +394,9 @@ public class GUIController {
 	private int replyWait() throws InterruptedException {
 		int i;
 		waitLock=1;
-		// wait 3 seconds for reply 
+		// wait 5 seconds for reply 
 		for( i=10; i>0 && waitLock==1;i--) {
-            Thread.sleep(300);
+            Thread.sleep(500);
             System.out.print(".");
 		}
 		return i;
@@ -389,11 +407,11 @@ public class GUIController {
 		reply=cmd;
 		if(cmd.obj instanceof Catalog) {
 			System.out.println("recieved catalog from server");
-			localCatalog=((Catalog)cmd.obj);
+			localCatalog=((Catalog)reply.obj);
 			localCatalog.printCatalog();
 		}
 		else {
-			System.out.println("recieved: <"+cmd.msg+"> from server, obj-"+cmd.obj.toString());
+			System.out.println("recieved: <"+reply.msg+"> from server, obj-"+reply.obj.toString());
 		}
 		
 		waitLock=0;
