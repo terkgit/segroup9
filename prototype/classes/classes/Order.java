@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 
-import javax.net.ssl.SSLException;
-
-import db.jdbc;
-
 public class Order implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -28,46 +24,21 @@ public class Order implements Serializable {
 	
 	public LinkedList<Item> getOrderList(){
 		return orderList;
-	}
-	public void setOrdreList(LinkedList<Item> _list) {
-		orderList=_list;
-	}
-	
-	public String getCard() {
-		return card;
-	}
-	public void setCard(String _card) {
-		card=_card;
-	}
-	
-	public signedUser getUser() {
-		return user;
-	}
-	public void setUser(signedUser _user) {
-		user=_user;
-	}
-	
-	
-	public String toString() {
-		int size = orderList.size();
-		String str="";
-		for(int i=0; i<size;i++)
-			str+=orderList.get(i).toString();
-		return str;
-	}
-	
-	public Order fromString(String str) {
-		String[] args = str.split("[*]");
-		int size = args.length;
-		Order order = new Order();
-		int i=0;
-		while(i<size) {
-			Item item = new Item();
-			order.orderList.add(item.fromString(args[i]));
 		}
-		return order;
+	public String getCard() {
+	return card;
 	}
-	
+
+	public signedUser getUser() {
+	return user;
+	}
+
+
+
+	public double getPrice() {
+		return price;
+	}
+
 	public String getDetails() {
 		price=0;
 		details = "Order Details\n\n Cart:\n";
@@ -80,6 +51,56 @@ public class Order implements Serializable {
 			details+= card;
 		return details;
 		
+	}
+
+	public DateTimeFormatter getOrderDate() {
+		return orderDate;
+	}
+
+	public DateTimeFormatter getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setOrdreList(LinkedList<Item> _list) {
+		orderList=_list;
+		}
+	
+	public void setCard(String _card) {
+		card=_card;
+		}
+	
+	public void setUser(signedUser _user) {
+		user=_user;
+		}
+	
+	public void setPrice(double _price) {
+		price=_price;
+	}
+	public void setOrderDate(DateTimeFormatter orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public void setDeliveryDate(DateTimeFormatter deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
+	public String toString() {
+		int size = orderList.size();
+		String str="";
+		for(int i=0; i<size;i++)
+			str+=orderList.get(i).toString();
+		return str;
+	}
+	public Order fromString(String str) {
+		String[] args = str.split("[*]");
+		int size = args.length;
+		Order order = new Order();
+		int i=0;
+		while(i<size) {
+			Item item = new Item();
+			order.orderList.add(item.fromString(args[i++]));
+		}
+		return order;
 	}
 	
 	public static void main(String args[]) {
@@ -96,22 +117,6 @@ public class Order implements Serializable {
 		String str = order.toString();
 		
 		order.fromString(str);
-	}
-
-	public DateTimeFormatter getOrderDate() {
-		return orderDate;
-	}
-
-	public void setOrderDate(DateTimeFormatter orderDate) {
-		this.orderDate = orderDate;
-	}
-
-	public DateTimeFormatter getDeliveryDate() {
-		return deliveryDate;
-	}
-
-	public void setDeliveryDate(DateTimeFormatter deliveryDate) {
-		this.deliveryDate = deliveryDate;
 	}
 
 }

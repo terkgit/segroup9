@@ -85,20 +85,28 @@ public class EchoServer extends AbstractServer
 				  	break;
 		
 		  	  		case ("!login"):
-		  	  			client.sendToClient(jdbc.updateItemInDataBase(cmd));
+		  	  			client.sendToClient(jdbc.logIn(cmd));
 				  	break;
 		
 		  	  		case ("!signUp"):
-		  	  			client.sendToClient(jdbc.addNewObjectToDataBase(cmd));
+		  	  			client.sendToClient(jdbc.signUp(cmd));
 				  	break;
 		
 		  	  		case ("!editItem"):
-		  	  			client.sendToClient(jdbc.updateItemInDataBase(cmd));
+		  	  			client.sendToClient(jdbc.editItem(cmd));
 				  	break;
 		
 		  	  		case ("!addItem"):
-		  	  		client.sendToClient(jdbc.addNewObjectToDataBase(cmd));
+		  	  			client.sendToClient(jdbc.addItem(cmd));
 				  	break;
+				  	
+		  	  		case("!order"):
+		  	  			client.sendToClient(jdbc.order(cmd));
+		  	  		break;
+		  	  		
+		  	  		case("!validate"):
+		  	  			client.sendToClient(jdbc.validate(cmd));
+		  	  		break;
 				  	
 	  			} // switch
     	  } // try

@@ -119,6 +119,21 @@ public class jdbc {
 					
 				}
 			}
+//			*********ADD NEW ORDER TO DATABASE*********
+			if(cmd.obj instanceof Order) {
+				Order order = new Order();
+				sql="SELECT * FROM `Orders`";
+				rs = stmt.executeQuery(sql);
+				rs.moveToInsertRow();
+				rs.updateString("username", order.getUser().getUserName());
+				rs.updateString("details", order.getDetails());
+				rs.updateDouble("price", order.getPrice());
+				rs.updateString("orderDate",order.getOrderDate().toString());
+				rs.updateString("deliveryDate",order.getDeliveryDate().toString());
+				rs.insertRow();
+				result = "Success";
+				
+			}
 			rs.close();
 			stmt.close();
 			conn.close();
@@ -159,7 +174,7 @@ public class jdbc {
 			ResultSet rs = null;
 			
 //			*********VALIDATE USER*********
-			if(cmd.obj instanceof signedUser) {
+			if(cmd.obj instanceof User && ((User)cmd.obj).getPermLevel().equals("SignedUser")) {
 				signedUser sUser = (signedUser)cmd.obj;
 				String sql = "SELECT * FROM Users WHERE username LIKE '" + sUser.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
@@ -175,6 +190,7 @@ public class jdbc {
 					result.msg = "validated";
 				}
 			}
+			
 //			*********UPDATE ITEM IN CATALOG*********
 			if(cmd.obj instanceof Item) {
 				Item item = (Item) cmd.obj;
@@ -186,8 +202,9 @@ public class jdbc {
 				rs.updateRow();
 				result.msg = "updated";
 			}
-//			*********SIGN IN*********
-			if(cmd.obj instanceof User) {
+			
+//			*********LOG IN*********
+			if(cmd.obj instanceof User && ((User)cmd.obj).getPermLevel().equals("Guest")) {
 				User user = (User) cmd.obj;
 				String sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
@@ -199,10 +216,8 @@ public class jdbc {
 				if(!pass.equals(user.getPassword()))
 					result.msg = "wrong password";
 				else {
-					signedUser sUser = new signedUser();
-					sUser.setUserName(user.getUserName());
-					sUser.setPassword(user.getPassword());
-					result.obj=sUser;
+					user.setPermLevel("SignedUser");
+					result.obj=user;
 					result.msg="Log In Success";
 				}
 			}
@@ -235,17 +250,29 @@ public class jdbc {
 		return result;
 	}
 	
-//	public static Command signUp(Command cmd) {	
-//		return addNewObjectToDataBase(cmd);
-//	}
-//	
-//	public static Command signIn(Command cmd) {
-//		return updateItemInDataBase(cmd);
-//	}
-//	
-//	public static Command validate(Command cmd) {
-//		return updateItemInDataBase(cmd);
-//	}
+	public static Command signUp(Command cmd) {	
+		return addNewObjectToDataBase(cmd);
+	}
+	
+	public static Command logIn(Command cmd) {
+		return updateItemInDataBase(cmd);
+	}
+	
+	public static Command validate(Command cmd) {
+		return updateItemInDataBase(cmd);
+	}
+
+	public static Command editItem(Command cmd) {
+		return updateItemInDataBase(cmd);
+	}
+
+	public static Object addItem(Command cmd) {
+		return addNewObjectToDataBase(cmd);
+	}
+
+	public static Object order(Command cmd) {
+		return addNewObjectToDataBase(cmd);
+	}
 	
 
 }

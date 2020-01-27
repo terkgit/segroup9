@@ -40,6 +40,24 @@ public class Item implements Serializable {
 		
 	}
 	
+	public int getId() {return id;}
+
+	public double getPrice() {return price;}
+
+	public String getName() {return name;}
+
+	public String getShop() {return shop;}
+
+	public int getAmount() {return amount;}
+
+	public String getPic() {return pic;	}
+
+	public String getColor() {return color;	}
+
+	public String getDetails() {
+		return name + " Price: " +price + "\n";
+	}
+
 	public void setId(int _id) {id=_id;	}
 	public void setPrice(double _price) {price=_price;	}
 	public void setName(String _name) {name=_name;}
@@ -47,15 +65,6 @@ public class Item implements Serializable {
 	public void setAmount(int _amount) {amount=_amount;}
 	public void setPic(String pic) {this.pic = pic;	}
 	public void setColor(String color) {this.color = color;}
-	
-	public int getId() {return id;}
-	public double getPrice() {return price;}
-	public String getName() {return name;}
-	public String getShop() {return shop;}
-	public int getAmount() {return amount;}
-	public String getPic() {return pic;	}
-	public String getColor() {return color;	}
-	
 	
 	public void printItem() {
 		String line = String.format("%-4d | %-16s | %6g |  %4d  | \"%s\"\n", id, name, price, amount, shop);
@@ -68,40 +77,36 @@ public class Item implements Serializable {
 	}
 	
 	public String toString() {
-		return "*"+id+"#"+name+"#"+price+"#"+color+"#"+shop+"#"+amount+"#"+pic+"*";
+		return id+"#"+name+"#"+price+"#"+color+"#"+shop+"#"+amount+"#"+pic+"*";
 	}
 	public Item fromString(String str) {
 		Item item=new Item();
 		String[] args = str.split("[* #]+");
-		int _id=Integer.parseInt(args[1]);
-		double _price=Double.parseDouble(args[3]);
-		int _amount = Integer.parseInt(args[6]);
+		int _id=Integer.parseInt(args[0]);
+		double _price=Double.parseDouble(args[2]);
+		int _amount = Integer.parseInt(args[5]);
 		item.setId(_id);
-		item.setName(args[2]);
+		item.setName(args[1]);
 		item.setPrice(_price);
-		item.setColor(args[4]);
-		item.setShop(args[5]);
+		item.setColor(args[3]);
+		item.setShop(args[4]);
 		item.setAmount(_amount);
-		item.setPic(args[7]);
+		item.setPic(args[6]);
 		
 		return item;
 	}
 
-	public String getDetails() {
-		return name + " Price: " +price + "\n";
+	public static void main(String args[]) {
+		Item item = new Item();
+		item.setId(1);
+		item.setAmount(10);
+		item.setColor("red");
+		item.setName("pikachu");
+		item.setPic("pic1");
+		item.setPrice(11.2);
+		item.setShop("shop1");
+		
+		String str = item.toString();
+		item = item.fromString(str);
 	}
-	
-//	public static void main(String args[]) {
-//		Item item = new Item();
-//		item.setId(1);
-//		item.setAmount(10);
-//		item.setColor("red");
-//		item.setName("pikachu");
-//		item.setPic("pic1");
-//		item.setPrice(11.2);
-//		item.setShop("shop1");
-//		
-//		String str = item.toString();
-//		item = item.fromString(str);
-//	}
 }
