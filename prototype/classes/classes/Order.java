@@ -14,7 +14,8 @@ public class Order implements Serializable {
 	
 	private signedUser user;
 	private LinkedList<Item> orderList;
-	private DateTimeFormatter date;
+	private DateTimeFormatter orderDate;
+	private DateTimeFormatter deliveryDate;
 	private String card;
 	private static String details ;
 	private static  double price;
@@ -22,25 +23,30 @@ public class Order implements Serializable {
 	public Order() {
 		user=null;
 		orderList=new LinkedList<Item>();
-		date=null;
 		card="";
 	}
 	
-	public LinkedList<Item> getOrderList(){return orderList;}
-	public void setOrdreList(LinkedList<Item> _list) {orderList=_list;}
-	
-	public String getCard() {return card;}
-	public void setCard(String _card) {card=_card;}
-	
-	public signedUser getUser() {return user;}
-	public void setUser(signedUser _user) {user=_user;}
-	
-	public DateTimeFormatter getDate() {
-		return date;
+	public LinkedList<Item> getOrderList(){
+		return orderList;
 	}
-	public void setDate(DateTimeFormatter date) {
-		this.date = date;
+	public void setOrdreList(LinkedList<Item> _list) {
+		orderList=_list;
 	}
+	
+	public String getCard() {
+		return card;
+	}
+	public void setCard(String _card) {
+		card=_card;
+	}
+	
+	public signedUser getUser() {
+		return user;
+	}
+	public void setUser(signedUser _user) {
+		user=_user;
+	}
+	
 	
 	public String toString() {
 		int size = orderList.size();
@@ -49,6 +55,7 @@ public class Order implements Serializable {
 			str+=orderList.get(i).toString();
 		return str;
 	}
+	
 	public Order fromString(String str) {
 		String[] args = str.split("[*]");
 		int size = args.length;
@@ -89,6 +96,22 @@ public class Order implements Serializable {
 		String str = order.toString();
 		
 		order.fromString(str);
+	}
+
+	public DateTimeFormatter getOrderDate() {
+		return orderDate;
+	}
+
+	public void setOrderDate(DateTimeFormatter orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public DateTimeFormatter getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(DateTimeFormatter deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 
 }
