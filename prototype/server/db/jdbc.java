@@ -2,7 +2,6 @@ package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-//import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,10 +12,6 @@ import classes.*;
 
 public class jdbc {
 	static private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-
-	// update USER, PASS and DB URL according to credentials provided by the website:
-	// https://remotemysql.com/
-	// in future move these hard coded strings into separated config file or even better env variables
 	static private final String DB = "P0KAg0apUE";
 	static private final String DB_URL = "jdbc:mysql://remotemysql.com/"+ DB + "?useSSL=false";
 	static private final String USER = "P0KAg0apUE";
@@ -72,6 +67,7 @@ public class jdbc {
 		return reply;
 	}
 	
+	
 	public static Command addNewObjectToDataBase(Command cmd){
 		Connection conn = null;
 		Statement stmt = null;
@@ -82,6 +78,7 @@ public class jdbc {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = null;
 			String sql;
+			
 //			*********ADD NEW ITEM TO CATALOG*********
 			if(cmd.obj instanceof Item) {
 				Item item=(Item)cmd.obj;
@@ -102,7 +99,7 @@ public class jdbc {
 					result = "Success";
 				}
 			}
-//			*********ADD NEW USER TO DATABASE*********
+//			*********SIGN UP - ADD NEW USER TO DATABASE*********
 			if(cmd.obj instanceof User) {
 				User user = (User)cmd.obj;
 				sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
@@ -113,10 +110,28 @@ public class jdbc {
 					rs.moveToInsertRow();
 					rs.updateString("username", user.getUserName());
 					rs.updateString("password", user.getPassword());
+					rs.updateString("permissionLevel", user.getPermLevel());
 					rs.insertRow();
 					result = "Success";
 					
 				}
+			}
+//			*********ADD NEW ORDER TO DATABASE*********
+			if(cmd.obj instanceof Order) {
+				Order order = new Order();
+				order=(Order) cmd.obj;
+				sql="SELECT * FROM `Orders`";
+				rs = stmt.executeQuery(sql);
+				rs.moveToInsertRow();
+				rs.updateString("username", order.getUser().getUserName());
+				rs.updateString("details", order.getDetails());
+				rs.updateDouble("price", order.getPrice());
+				rs.updateDate("orderDate",new java.sql.Date(order.getOrderDate().getTime()));
+				rs.updateDate("deliveryDate",new java.sql.Date(order.getDeliveryDate().getTime()));
+				rs.updateString("status", order.getStatus());
+				rs.insertRow();
+				result = "Success";
+				
 			}
 			rs.close();
 			stmt.close();
@@ -158,8 +173,8 @@ public class jdbc {
 			ResultSet rs = null;
 			
 //			*********VALIDATE USER*********
-			if(cmd.obj instanceof signedUser) {
-				signedUser sUser = (signedUser)cmd.obj;
+			if(cmd.obj instanceof User && ((User)cmd.obj).getPermLevel().equals("SignedUser")) {
+				User sUser = (User)cmd.obj;
 				String sql = "SELECT * FROM Users WHERE username LIKE '" + sUser.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
 				rs.last();
@@ -174,6 +189,7 @@ public class jdbc {
 					result.msg = "validated";
 				}
 			}
+			
 //			*********UPDATE ITEM IN CATALOG*********
 			if(cmd.obj instanceof Item) {
 				Item item = (Item) cmd.obj;
@@ -185,12 +201,13 @@ public class jdbc {
 				rs.updateRow();
 				result.msg = "updated";
 			}
-//			*********SIGN IN*********
-			if(cmd.obj instanceof User) {
+			
+//			*********LOG IN*********
+			if(cmd.obj instanceof User && ((User)cmd.obj).getPermLevel().equals("Guest")) {
 				User user = (User) cmd.obj;
 				String sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
-				if(rs.last()) {
+				if(!rs.last()) {
 					result.msg = "wrong username";
 					return result;
 				}
@@ -198,12 +215,22 @@ public class jdbc {
 				if(!pass.equals(user.getPassword()))
 					result.msg = "wrong password";
 				else {
-					signedUser sUser = new signedUser();
-					sUser.setUserName(user.getUserName());
-					sUser.setPassword(user.getPassword());
-					result.obj=sUser;
+					user.setPermLevel("SignedUser");
+					result.obj=user;
 					result.msg="Log In Success";
 				}
+			}
+			
+//			*********UPDATE ORDER'S STATUS*********
+			if(cmd.obj instanceof Order) {
+				Order order = new Order();
+				order=(Order) cmd.obj;
+				String sql = "SELECT * FROM `Orders` WHERE `username` LIKE '"+order.getUser().getUserName()+"' AND `orderDate` = '"+new java.sql.Date(order.getOrderDate().getTime())+"'";
+				rs = stmt.executeQuery(sql);
+				rs.last();
+				rs.updateString("status", order.getStatus());
+				rs.updateRow();
+				result.msg = "Status Updated";
 			}
 			
 			rs.close();
@@ -234,17 +261,33 @@ public class jdbc {
 		return result;
 	}
 	
-//	public static Command signUp(Command cmd) {	
-//		return addNewObjectToDataBase(cmd);
-//	}
-//	
-//	public static Command signIn(Command cmd) {
-//		return updateItemInDataBase(cmd);
-//	}
-//	
-//	public static Command validate(Command cmd) {
-//		return updateItemInDataBase(cmd);
-//	}
+	public static Command signUp(Command cmd) {	
+		return addNewObjectToDataBase(cmd);
+	}
+	
+	public static Command logIn(Command cmd) {
+		return updateItemInDataBase(cmd);
+	}
+	
+	public static Command validate(Command cmd) {
+		return updateItemInDataBase(cmd);
+	}
+
+	public static Command editItem(Command cmd) {
+		return updateItemInDataBase(cmd);
+	}
+
+	public static Object addItem(Command cmd) {
+		return addNewObjectToDataBase(cmd);
+	}
+
+	public static Object order(Command cmd) {
+		return addNewObjectToDataBase(cmd);
+	}
+
+	public static Object cancelOrder(Command cmd) {
+		return  updateItemInDataBase(cmd);
+	}
 	
 
 }

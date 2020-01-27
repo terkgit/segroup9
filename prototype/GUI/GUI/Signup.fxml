@@ -22,7 +22,7 @@
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eed881" height="331.0" layoutX="131.0" layoutY="29.0" stroke="BLACK" strokeType="INSIDE" width="433.0" />
       <Button layoutX="186.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Skip" />
       <TextField layoutX="243.0" layoutY="68.0" prefHeight="25.0" prefWidth="305.0" />
-      <Button layoutX="419.0" layoutY="364.0" mnemonicParsing="false" onAction="#signupVarify" prefHeight="25.0" prefWidth="71.0" text="Varify" />
+      <Button layoutX="419.0" layoutY="364.0" mnemonicParsing="false" onAction="#signupValidate" prefHeight="25.0" prefWidth="71.0" text="Validate" />
       <TextField editable="false" layoutX="147.0" layoutY="68.0" prefHeight="25.0" prefWidth="71.0" text="Adress:" />
       <TextField editable="false" layoutX="147.0" layoutY="114.0" prefHeight="25.0" prefWidth="71.0" text="Phone:" />
       <PasswordField layoutX="243.0" layoutY="114.0" prefHeight="25.0" prefWidth="305.0" />
@@ -39,7 +39,12 @@
       <Label layoutX="149.0" layoutY="146.0" prefHeight="17.0" prefWidth="400.0" text="Enter your phone number" />
       <Label layoutX="149.0" layoutY="200.0" prefHeight="17.0" prefWidth="400.0" text="Enter payment method details" />
       <Label layoutX="150.0" layoutY="248.0" prefHeight="17.0" prefWidth="400.0" text="Check if you want a monthly membership and get our special offers!" />
-      <Label layoutX="174.0" layoutY="343.0" prefHeight="17.0" prefWidth="71.0" text="(varify later )" />
-      <Label layoutX="413.0" layoutY="343.0" prefHeight="17.0" prefWidth="117.0" text="(varify account )" />
+      <Label layoutX="168.0" layoutY="343.0" prefHeight="17.0" prefWidth="87.0" text="(Validate later )" />
+      <Label layoutX="413.0" layoutY="343.0" prefHeight="17.0" prefWidth="117.0" text="(Validate account )" />
+      <Text fx:id="generalMsg" layoutX="168.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Validated Acount is Required In Order To Purchase">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

@@ -23,13 +23,6 @@ import db.jdbc;
  */
 public class EchoServer extends AbstractServer 
 {
-  //Class variables *************************************************
-	enum permissionLevel {
-		USER,
-		BOSS,
-		ADMIN
-	}
-	
   /**
    * The default port to listen on.
    */
@@ -40,9 +33,6 @@ public class EchoServer extends AbstractServer
    * the display method in the client.
    */
   ChatIF serverUI;
-
-  
-  //Constructors ****************************************************
   
   /**
    * Constructs an instance of the echo server.
@@ -65,9 +55,6 @@ public class EchoServer extends AbstractServer
     super(port);
     this.serverUI = serverUI;
   }
-
-  
-  //Instance methods ************************************************
   
   /**
    * This method handles any messages received from the client.
@@ -98,25 +85,34 @@ public class EchoServer extends AbstractServer
 				  	break;
 		
 		  	  		case ("!login"):
-		  	  			System.out.println("TODO! !login");
-		  	  			((User)cmd.obj).printUser();
-		  	  			reply=new Command("TODO! !login ");
-		  	  			reply.obj=cmd.obj;
-		  	  			client.sendToClient(jdbc.updateItemInDataBase(cmd));
+		  	  			client.sendToClient(jdbc.logIn(cmd));
 				  	break;
 		
 		  	  		case ("!signUp"):
-		  	  			client.sendToClient(jdbc.addNewObjectToDataBase(cmd));
+		  	  			client.sendToClient(jdbc.signUp(cmd));
 				  	break;
 		
 		  	  		case ("!editItem"):
-		  	  			client.sendToClient(jdbc.updateItemInDataBase(cmd));
+		  	  			client.sendToClient(jdbc.editItem(cmd));
 				  	break;
 		
 		  	  		case ("!addItem"):
-		  	  		client.sendToClient(jdbc.addNewObjectToDataBase(cmd));
+		  	  			client.sendToClient(jdbc.addItem(cmd));
 				  	break;
 				  	
+		  	  		case("!order"):
+		  	  			client.sendToClient(jdbc.order(cmd));
+		  	  		break;
+		  	  		
+		  	  		case("!validate"):
+		  	  			client.sendToClient(jdbc.validate(cmd));
+		  	  		break;
+				  	
+		  	  		case("!cancel"):
+		  	  			client.sendToClient(jdbc.cancelOrder(cmd));
+		  	  		break;
+			  	
+	  	  		
 	  			} // switch
     	  } // try
     	  catch (SSLException e) {
@@ -187,7 +183,9 @@ public class EchoServer extends AbstractServer
   {
     // display on server and clients when a user disconnects
     String msg = client.getInfo("loginID").toString() + " has disconnected";
-
+    
+//	CHECK THIS SHIT *****************************
+    
     System.out.println(msg);
     this.sendToAllClients(msg);
   }

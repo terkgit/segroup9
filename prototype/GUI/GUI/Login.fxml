@@ -28,5 +28,10 @@
          </font>
       </Text>
       <Button layoutX="8.0" layoutY="215.0" mnemonicParsing="false" onAction="#handleSignUp" prefHeight="25.0" prefWidth="174.0" text="Sign Up" />
+      <Text fx:id="generalMsg" layoutX="167.0" layoutY="400.0" strokeType="OUTSIDE" strokeWidth="0.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

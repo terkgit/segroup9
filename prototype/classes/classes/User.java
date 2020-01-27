@@ -8,37 +8,27 @@ public class User implements Serializable {
 	
 	private String userName;
 	private String password;
-	private String permLevel;
+	private String permLevel;	
+	private String name;
+	private int id;
+	private int creditCard;
 	
 	public User(String _name, String _pass) {
-		userName=_name;
-		password=_pass;
+		setUserName(_name);
+		setPassword(_pass);
 		setPermLevel("Guest");
 	}
 
 	
 	public User() {
-		userName="";
-		password="";
+		setUserName("Guest");
+		setPassword("");
 		setPermLevel("Guest");
 	}
 
-	
-	//public int getId() {return id;}
-	public String getUserName() {return userName;}
-	public String getPassword() {return password;}
-	///public permissionLevel getPermissionLevel() {return permission;}
-	//public String getPhone() {return phone;}
-	
-	//public void setId(int _id) {id=_id;}
-	public void setUserName(String _userName) {userName=_userName;}
-	public void setPassword(String _password) {password=_password;}
-	//public void setPermissionLevel(Object _permission) {permission=(permissionLevel) _permission;}
-	//public void setPhone(String _phone) {phone=_phone;};
-
 
 	public void printUser() {
-		System.out.println("name: "+userName);
+		System.out.println("name: "+getUserName());
 		
 	}
 
@@ -51,6 +41,57 @@ public class User implements Serializable {
 	public void setPermLevel(String permLevel) {
 		this.permLevel = permLevel;
 	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+	public int getCreditCard() {
+		return creditCard;
+	}
+
+
+	public void setCreditCard(int creditCard) {
+		this.creditCard = creditCard;
+	}
+
+
+	public String getPassword() {
+		return password;
+	}
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+	public String getUserName() {
+		return userName;
+	}
+
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 		
 }
 
