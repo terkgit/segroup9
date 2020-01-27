@@ -10,7 +10,7 @@ public class signedUser extends User{
 	private int creditCard;
 	
 	public signedUser() {
-		
+		setPermLevel("SignedUser");
 	}
 	
 	public void setName(String _name) {name=_name;}
