@@ -94,13 +94,7 @@ public class EchoServer extends AbstractServer
     		  	System.out.println(args[0]+" command");
     		  	switch (args[0]) {
 	  	  			case ("!list"):
-	  	  				//ctlg=(catalog) jdbc.listCatalog();
-	  	  				//ctlg.printCatalog();
 	  	  				client.sendToClient(jdbc.listCatalog());
-				  	break;
-		
-		  	  		case ("!updatePrice"):
-		  	  			client.sendToClient(jdbc.updatePrice(args));
 				  	break;
 		
 		  	  		case ("!login"):
@@ -108,31 +102,19 @@ public class EchoServer extends AbstractServer
 		  	  			((User)cmd.obj).printUser();
 		  	  			reply=new Command("TODO! !login ");
 		  	  			reply.obj=cmd.obj;
-		  	  			client.sendToClient(reply);
+		  	  			client.sendToClient(jdbc.updateItemInDataBase(cmd));
 				  	break;
 		
 		  	  		case ("!signUp"):
-		  	  			System.out.println("TODO! !signUp");
-		  	  			((User)cmd.obj).printUser();
-		  	  			reply=new Command("TODO! !signUp ");
-		  	  			reply.obj=cmd.obj;
-		  	  			client.sendToClient(reply);
+		  	  			client.sendToClient(jdbc.addNewObjectToDataBase(cmd));
 				  	break;
 		
 		  	  		case ("!editItem"):
-		  	  			System.out.println("TODO! !editItem");
-		  	  			((Item)cmd.obj).printItem();
-		  	  			reply=new Command("TODO! !editItem ");
-		  	  			reply.obj=cmd.obj;
-		  	  			client.sendToClient(reply);
+		  	  			client.sendToClient(jdbc.updateItemInDataBase(cmd));
 				  	break;
 		
 		  	  		case ("!addItem"):
-		  	  			System.out.println("TODO! !addItem");
-		  	  			((Item)cmd.obj).printItem();
-		  	  			reply=new Command("TODO! !addItem ");
-		  	  			reply.obj=cmd.obj;
-		  	  			client.sendToClient(reply);
+		  	  		client.sendToClient(jdbc.addNewObjectToDataBase(cmd));
 				  	break;
 				  	
 	  			} // switch
@@ -153,125 +135,9 @@ public class EchoServer extends AbstractServer
    */
   public void handleMessageFromServerUI(String message)
   {
-    if (message.charAt(0) == '#')
-    {
-      runCommand(message);
-    }
-    else
-    {
-      // send message to clients
-      serverUI.display(message);
-      this.sendToAllClients("SERVER MSG> " + message);
-    }
+	  System.out.println("chat disabled.");
   }
-
-  /**
-   * This method executes server commands.
-   *
-   * @param message String from the server console.
- * @throws SSLException 
-   */
-  private void runCommand(String message) 
-  {
-    // run commands
-    // a series of if statements
-	  
-	  if(message.equals("#additem")) {
-		  Item newItem = new Item();
-		  newItem.setId(7);
-		  newItem.setName("flower11");
-		  newItem.setPrice(22.32);
-		  newItem.setAmount(47);
-		  newItem.setShop("KukurikuShop");
-		  
-		  try {
-			jdbc.addNewObjectToDataBase(newItem);
-		} catch (SSLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	  }
-	  
-	  if(message.equals("#adduser")) {
-		  signedUser sUser = new signedUser();
-		  sUser.setId(326869716);
-		  sUser.setPassword("123456");
-//		  sUser.setPermissionLevel(permissionLevel.ADMIN);
-		  sUser.setUserName("Feodor");
-		  sUser.setPhone("0548835483");
-		  
-		  try {
-			jdbc.addNewObjectToDataBase(sUser);
-		} catch (SSLException e) {
-			// TODO Auto-generated catch block
-			
-			e.printStackTrace();
-		}
-		  
-	  }
-	  
-
-    if (message.equalsIgnoreCase("#quit"))
-    {
-      quit();
-    }
-    else if (message.equalsIgnoreCase("#stop"))
-    {
-      stopListening();
-    }
-    else if (message.equalsIgnoreCase("#close"))
-    {
-      try
-      {
-        close();
-      }
-      catch(IOException e) {}
-    }
-    else if (message.toLowerCase().startsWith("#setport"))
-    {
-      if (getNumberOfClients() == 0 && !isListening())
-      {
-        // If there are no connected clients and we are not 
-        // listening for new ones, assume server closed.
-        // A more exact way to determine this was not obvious and
-        // time was limited.
-        int newPort = Integer.parseInt(message.substring(9));
-        setPort(newPort);
-        //error checking should be added
-        serverUI.display
-          ("Server port changed to " + getPort());
-      }
-      else
-      {
-        serverUI.display
-          ("The server is not closed. Port cannot be changed.");
-      }
-    }
-    else if (message.equalsIgnoreCase("#start"))
-    {
-      if (!isListening())
-      {
-        try
-        {
-          listen();
-        }
-        catch(Exception ex)
-        {
-          serverUI.display("Error - Could not listen for clients!");
-        }
-      }
-      else
-      {
-        serverUI.display
-          ("The server is already listening for clients.");
-      }
-    }
-    else if (message.equalsIgnoreCase("#getport"))
-    {
-      serverUI.display("Currently port: " + Integer.toString(getPort()));
-    }
-  }
-    
+ 
   /**
    * This method overrides the one in the superclass.  Called
    * when the server starts listening for connections.

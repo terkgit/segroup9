@@ -72,7 +72,7 @@ public class jdbc {
 		return reply;
 	}
 	
-	public static String addNewObjectToDataBase(Object obj){
+	public static Command addNewObjectToDataBase(Command cmd){
 		Connection conn = null;
 		Statement stmt = null;
 		String result = null;
@@ -83,8 +83,9 @@ public class jdbc {
 			ResultSet rs = null;
 			String sql;
 //			*********ADD NEW ITEM TO CATALOG*********
-			if(obj instanceof Item) {
-				sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+((Item) obj).getName()+"' AND `shop` LIKE '"+((Item) obj).getShop()+"'";
+			if(cmd.obj instanceof Item) {
+				Item item=(Item)cmd.obj;
+				sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+item.getName()+"' AND `shop` LIKE '"+item.getShop()+"'";
 				rs = stmt.executeQuery(sql);
 				if(rs.last())
 					result = "alredy exists";
@@ -92,27 +93,28 @@ public class jdbc {
 					sql = "SELECT * FROM `Catalog`";
 					rs = stmt.executeQuery(sql);
 					rs.moveToInsertRow();
-					rs.updateInt("id", ((Item) obj).getId());
-					rs.updateString("name", ((Item) obj).getName());
-					rs.updateDouble("price", ((Item) obj).getPrice());
-					rs.updateString("shop", ((Item) obj).getShop());
-					rs.updateInt("amount", ((Item) obj).getAmount());
+					rs.updateInt("id", item.getId());
+					rs.updateString("name", item.getName());
+					rs.updateDouble("price", item.getPrice());
+					rs.updateString("shop", item.getShop());
+					rs.updateInt("amount", item.getAmount());
 					rs.insertRow();
-					result = "succes";
+					result = "Success";
 				}
 			}
 //			*********ADD NEW USER TO DATABASE*********
-			if(obj instanceof User) {
-				sql = "SELECT * FROM Users WHERE username LIKE '" + ((User) obj).getUserName()+"'";
+			if(cmd.obj instanceof User) {
+				User user = (User)cmd.obj;
+				sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
 				if(rs.last()) 		//check if user name already exist
 					result = "alredy exists";
 				else{
 					rs.moveToInsertRow();
-					rs.updateString("username", ((User) obj).getUserName());
-					rs.updateString("password", ((User) obj).getPassword());
+					rs.updateString("username", user.getUserName());
+					rs.updateString("password", user.getPassword());
 					rs.insertRow();
-					result = "succes";
+					result = "Success";
 					
 				}
 			}
@@ -141,14 +143,14 @@ public class jdbc {
 				se.printStackTrace();
 			}
 		}
-		return result;
+		return new Command(result);
 	}
 
-	public static Command updateItemInDataBase(Object obj) {
+	public static Command updateItemInDataBase(Command cmd) {
 		Connection conn = null;
 		Statement stmt = null;
-		Command result=new Command();
-		result.obj=obj;
+		Command result=new Command("");
+		result.obj=cmd.obj;
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -156,48 +158,51 @@ public class jdbc {
 			ResultSet rs = null;
 			
 //			*********VALIDATE USER*********
-			if(obj instanceof signedUser) {;
-				String sql = "SELECT * FROM Users WHERE username LIKE '" + ((signedUser) obj).getUserName()+"'";
+			if(cmd.obj instanceof signedUser) {
+				signedUser sUser = (signedUser)cmd.obj;
+				String sql = "SELECT * FROM Users WHERE username LIKE '" + sUser.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
 				rs.last();
 				String pass=rs.getString("password");
-				if(!pass.equals(((signedUser) obj).getPassword()))
+				if(!pass.equals(sUser.getPassword()))
 					result.msg = "wrong password";
 				else {
-					rs.updateString("name", ((signedUser) obj).getName());
-					rs.updateInt("id", ((signedUser) obj).getId());
-					rs.updateInt("credit card", ((signedUser) obj).getCreditCard());
+					rs.updateString("name", sUser.getName());
+					rs.updateInt("id", sUser.getId());
+					rs.updateInt("credit card", sUser.getCreditCard());
 					rs.updateRow();
 					result.msg = "validated";
 				}
 			}
 //			*********UPDATE ITEM IN CATALOG*********
-			if(obj instanceof Item) {
-				String sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+((Item) obj).getName()+"' AND `shop` LIKE '"+((Item) obj).getShop()+"'";
+			if(cmd.obj instanceof Item) {
+				Item item = (Item) cmd.obj;
+				String sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+item.getName()+"' AND `shop` LIKE '"+item.getShop()+"'";
 				rs = stmt.executeQuery(sql);
 				rs.last();
-				rs.updateDouble("price", ((Item) obj).getPrice());
-				rs.updateInt("amount", ((Item) obj).getAmount());
+				rs.updateDouble("price", item.getPrice());
+				rs.updateInt("amount", item.getAmount());
 				rs.updateRow();
 				result.msg = "updated";
 			}
 //			*********SIGN IN*********
-			if(obj instanceof User) {
-				String sql = "SELECT * FROM Users WHERE username LIKE '" + ((User) obj).getUserName()+"'";
+			if(cmd.obj instanceof User) {
+				User user = (User) cmd.obj;
+				String sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
 				if(rs.last()) {
 					result.msg = "wrong username";
 					return result;
 				}
 				String pass=rs.getString("password");
-				if(!pass.equals(((User) obj).getPassword()))
+				if(!pass.equals(user.getPassword()))
 					result.msg = "wrong password";
 				else {
 					signedUser sUser = new signedUser();
-					sUser.setUserName(((User) obj).getUserName());
-					sUser.setPassword(((User) obj).getPassword());
+					sUser.setUserName(user.getUserName());
+					sUser.setPassword(user.getPassword());
 					result.obj=sUser;
-					result.msg="Log In Succes";
+					result.msg="Log In Success";
 				}
 			}
 			
@@ -229,19 +234,17 @@ public class jdbc {
 		return result;
 	}
 	
-	public static Command signUp(Command cmd) {
-		Command flag = new Command(cmd.msg, cmd.obj);
-		flag.msg = addNewObjectToDataBase(cmd.obj);
-		return flag;
-	}
-	
-	public static Command signIn(Command cmd) {
-		return updateItemInDataBase(cmd.obj);
-	}
-	
-	public static Command validate(Command cmd) {
-		return updateItemInDataBase(cmd.obj);
-	}
+//	public static Command signUp(Command cmd) {	
+//		return addNewObjectToDataBase(cmd);
+//	}
+//	
+//	public static Command signIn(Command cmd) {
+//		return updateItemInDataBase(cmd);
+//	}
+//	
+//	public static Command validate(Command cmd) {
+//		return updateItemInDataBase(cmd);
+//	}
 	
 
 }

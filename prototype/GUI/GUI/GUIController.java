@@ -38,6 +38,7 @@ public class GUIController {
 	private static String clientMsg;
 	private static String userTxtStr;	
 	private static int waitLock=0;
+	private static Command reply;
 
 	public static void initStatics(){
 		userTxtStr="Guest";
@@ -214,7 +215,7 @@ public class GUIController {
     	}
     }
     
-    @FXML void catalogAddItem(ActionEvent event) throws IOException {
+    @FXML void catalogAddItem(ActionEvent event) throws IOException, InterruptedException {
 		String _name=catalogMName.getText();
 		double _price=Double.valueOf(catalogMPrice.getText());
 		int _amount=Integer.parseInt(catalogMAmount.getText());
@@ -225,6 +226,8 @@ public class GUIController {
     	System.out.println("add item: "+item.stringItem());
 		catalogTxt.setText("add request to item: "+item.stringItem());
 		client.ClientConsole.send(new Command("!addItem",item));
+		int status = replyWait();
+		System.out.println("reply status: "+status);
     }
 
 	@SuppressWarnings("unused")private void __Login__() {}
@@ -329,7 +332,7 @@ public class GUIController {
 
 	public static void display(Command cmd) {
 		// TODO Auto-generated method stub
-		clientMsg=cmd.msg;
+		reply=cmd;
 		if(cmd.obj instanceof Catalog) {
 			System.out.println("recieved catalog from server");
 			localCatalog=((Catalog)cmd.obj);
