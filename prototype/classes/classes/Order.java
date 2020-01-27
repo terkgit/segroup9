@@ -4,17 +4,14 @@ import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 
-import javax.net.ssl.SSLException;
-
-import db.jdbc;
-
 public class Order implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private signedUser user;
 	private LinkedList<Item> orderList;
-	private DateTimeFormatter date;
+	private DateTimeFormatter orderDate;
+	private DateTimeFormatter deliveryDate;
 	private String card;
 	private static String details ;
 	private static  double price;
@@ -22,26 +19,71 @@ public class Order implements Serializable {
 	public Order() {
 		user=null;
 		orderList=new LinkedList<Item>();
-		date=null;
 		card="";
 	}
 	
-	public LinkedList<Item> getOrderList(){return orderList;}
-	public void setOrdreList(LinkedList<Item> _list) {orderList=_list;}
-	
-	public String getCard() {return card;}
-	public void setCard(String _card) {card=_card;}
-	
-	public signedUser getUser() {return user;}
-	public void setUser(signedUser _user) {user=_user;}
-	
-	public DateTimeFormatter getDate() {
-		return date;
+	public LinkedList<Item> getOrderList(){
+		return orderList;
+		}
+	public String getCard() {
+	return card;
 	}
-	public void setDate(DateTimeFormatter date) {
-		this.date = date;
+
+	public signedUser getUser() {
+	return user;
 	}
+
+
+
+	public double getPrice() {
+		return price;
+	}
+
+	public String getDetails() {
+		price=0;
+		details = "Order Details\n\n Cart:\n";
+		orderList.forEach((item)->{
+			details += item.getDetails();
+			price+=item.getPrice();
+		});
+		details+= "Total Price is: "+price+"\n";
+		if(!card.equals(""))
+			details+= card;
+		return details;
+		
+	}
+
+	public DateTimeFormatter getOrderDate() {
+		return orderDate;
+	}
+
+	public DateTimeFormatter getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setOrdreList(LinkedList<Item> _list) {
+		orderList=_list;
+		}
 	
+	public void setCard(String _card) {
+		card=_card;
+		}
+	
+	public void setUser(signedUser _user) {
+		user=_user;
+		}
+	
+	public void setPrice(double _price) {
+		price=_price;
+	}
+	public void setOrderDate(DateTimeFormatter orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public void setDeliveryDate(DateTimeFormatter deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
 	public String toString() {
 		int size = orderList.size();
 		String str="";
@@ -56,23 +98,9 @@ public class Order implements Serializable {
 		int i=0;
 		while(i<size) {
 			Item item = new Item();
-			order.orderList.add(item.fromString(args[i]));
+			order.orderList.add(item.fromString(args[i++]));
 		}
 		return order;
-	}
-	
-	public String getDetails() {
-		price=0;
-		details = "Order Details\n\n Cart:\n";
-		orderList.forEach((item)->{
-			details += item.getDetails();
-			price+=item.getPrice();
-		});
-		details+= "Total Price is: "+price+"\n";
-		if(!card.equals(""))
-			details+= card;
-		return details;
-		
 	}
 	
 	public static void main(String args[]) {
