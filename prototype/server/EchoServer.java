@@ -108,6 +108,11 @@ public class EchoServer extends AbstractServer
 		  	  			client.sendToClient(jdbc.validate(cmd));
 		  	  		break;
 				  	
+		  	  		case("!cancel"):
+		  	  			client.sendToClient(jdbc.cancelOrder(cmd));
+		  	  		break;
+			  	
+	  	  		
 	  			} // switch
     	  } // try
     	  catch (SSLException e) {
