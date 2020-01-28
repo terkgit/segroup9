@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -103,12 +104,9 @@ public class GUIController {
     @FXML private TextField orderAdressTF;
     @FXML private CheckBox  orderCardCB;
     @FXML private TextArea orderCardTA;
- 
+    @FXML private TextField orderPhoneTF;
+    @FXML private DatePicker orderDate;
     
-    /**** debug ****/
-    @FXML private TextField debugCommandTxt;
-    @FXML private TextArea debugObjectTxt;
-//    @FXML private Button debugSendBtn;
 
     @FXML void initialize() {
         if(userTxt!=null)
@@ -353,7 +351,7 @@ public class GUIController {
 			client.ClientConsole.send(cmd);
 			int status = replyWait();
 			System.out.println("reply recieved: "+(status!=0));
-			if(reply.msg.equals("Log In Success")) {
+			if(reply.msg.equals("login Success")) {
 				localUser=(User)reply.obj;
 				gotoWelcome(event);
 			}
@@ -423,21 +421,6 @@ public class GUIController {
 	    stage.setScene(scene);
 	    stage.show();
 	}
-
-	@SuppressWarnings("unused")private void _DEBUG_() {}
-
-    @FXML void debugRefresh(ActionEvent event) {
-		System.out.println("msg after send"+clientMsg);
-		System.out.println("--------------------");
-		debugObjectTxt.setText(clientMsg);
-    }
-
-    @FXML void debugSend(ActionEvent event) throws InterruptedException {
-		client.ClientConsole.send(new Command(debugCommandTxt.getText()));
-		int status = replyWait();
-		System.out.println("reply recieved: "+(status!=0));
-		debugObjectTxt.setText(clientMsg);
-    }
 
 	private int replyWait() throws InterruptedException {
 		int i;
