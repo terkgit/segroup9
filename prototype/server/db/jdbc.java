@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
 
 import javax.net.ssl.SSLException;
 
@@ -69,6 +72,58 @@ public class jdbc {
 		return reply;
 	}
 	
+	public static Command listUserOrders(Command cmd) throws SSLException {
+		Connection conn = null;
+		Statement stmt = null;
+		LinkedList<Order> orderList = new LinkedList<Order>();
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			String sql = "SELECT * FROM `Orders` WHERE `username` LIKE '"+(String)cmd.obj+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				Order order = new Order();
+				order.setUserName(rs.getString("username"));
+				order.fromString(rs.getString("details"));
+				order.setCard(rs.getString("card"));
+				order.setAddress(rs.getString("address"));
+				order.setPhone(rs.getString("phone"));
+				order.setPrice(rs.getDouble("price"));
+				order.setOrderDate(rs.getString("orderDate"));
+				order.setDeliveryDate(rs.getString("deliveryDate"));
+				order.setStatus(rs.getString("status"));
+				orderList.add(order);
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+		} 
+		catch (SQLException se) {
+			se.printStackTrace();
+			System.out.println("SQLException: " + se.getMessage());
+            System.out.println("SQLState: " + se.getSQLState());
+            System.out.println("VendorError: " + se.getErrorCode());
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+		finally { 
+			try {
+				if (stmt != null)
+					stmt.close();
+				if (conn != null)
+					conn.close();
+			} 
+			catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+
+		Command reply = new Command("User Order List Created", orderList);
+		return reply;
+	}
+	
 	
 	public static Command addNewObjectToDataBase(Command cmd){
 		Connection conn = null;
@@ -92,7 +147,6 @@ public class jdbc {
 					sql = "SELECT * FROM `Catalog`";
 					rs = stmt.executeQuery(sql);
 					rs.moveToInsertRow();
-					rs.updateInt("id", item.getId());
 					rs.updateString("name", item.getName());
 					rs.updateDouble("price", item.getPrice());
 					rs.updateString("shop", item.getShop());
@@ -124,15 +178,19 @@ public class jdbc {
 			if(cmd.obj instanceof Order) {
 				Order order = new Order();
 				order=(Order) cmd.obj;
+				order.calculateTotalPrice();
 				sql="SELECT * FROM `Orders`";
 				rs = stmt.executeQuery(sql);
 				rs.moveToInsertRow();
-				rs.updateString("username", order.getUser().getUserName());
-				rs.updateString("details", order.getDetails());
+				rs.updateString("username", order.getUserName());
+				rs.updateString("details", order.toString());
+				rs.updateString("card", order.getCard());
 				rs.updateDouble("price", order.getPrice());
-				rs.updateDate("orderDate",new java.sql.Date(order.getOrderDate().getTime()));
-				rs.updateDate("deliveryDate",new java.sql.Date(order.getDeliveryDate().getTime()));
+				rs.updateString("orderDate",order.getOrderDate());
+				rs.updateString("deliveryDate",order.getDeliveryDate());
 				rs.updateString("status", order.getStatus());
+				rs.updateString("phone", order.getPhone());
+				rs.updateString("address", order.getAddress());
 				rs.insertRow();
 				result = "order - Success";
 			}
@@ -228,7 +286,7 @@ public class jdbc {
 			if(cmd.obj instanceof Order) {
 				Order order = new Order();
 				order=(Order) cmd.obj;
-				String sql = "SELECT * FROM `Orders` WHERE `username` LIKE '"+order.getUser().getUserName()+"' AND `orderDate` = '"+new java.sql.Date(order.getOrderDate().getTime())+"'";
+				String sql = "SELECT * FROM `Orders` WHERE `username` LIKE '"+order.getUserName()+"' AND `orderDate` = '"+order.getOrderDate()+"'";
 				rs = stmt.executeQuery(sql);
 				rs.last();
 				rs.updateString("status", order.getStatus());
@@ -289,6 +347,14 @@ public class jdbc {
 	}
 
 	public static Object cancelOrder(Command cmd) {
+		Order order = new Order();
+		order=(Order) cmd.obj;
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
+		String deliverDate = formatter.format(order.getDeliveryDate());
+		String now = formatter.format(new Date());
+		String[] delArgs = deliverDate.split("[/ :]");
+		String[] nowArgs = now.split("[/ :]");
+		
 		return  updateItemInDataBase(cmd);
 	}
 

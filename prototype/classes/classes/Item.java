@@ -78,21 +78,17 @@ public class Item implements Serializable {
 	}
 	
 	public String toString() {
-		return id+"#"+name+"#"+price+"#"+color+"#"+shop+"#"+amount+"#"+pic+"*";
+		return name+"#"+price+"#"+color+"#"+shop+"#"+"#"+pic+"*";
 	}
 	public Item fromString(String str) {
 		Item item=new Item();
 		String[] args = str.split("[* #]+");
-		int _id=Integer.parseInt(args[0]);
-		double _price=Double.parseDouble(args[2]);
-		int _amount = Integer.parseInt(args[5]);
-		item.setId(_id);
-		item.setName(args[1]);
+		double _price=Double.parseDouble(args[1]);
+		item.setName(args[0]);
 		item.setPrice(_price);
-		item.setColor(args[3]);
-		item.setShop(args[4]);
-		item.setAmount(_amount);
-		item.setPic(args[6]);
+		item.setColor(args[2]);
+		item.setShop(args[3]);
+		item.setPic(args[4]);
 		
 		return item;
 	}
