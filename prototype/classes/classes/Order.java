@@ -16,6 +16,7 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static DecimalFormat df = new DecimalFormat("0.00");
 	
+	public SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	private int id;
 	private String userName;
 	private LinkedList<Item> orderList;
@@ -27,20 +28,20 @@ public class Order implements Serializable {
 	private double price;
 	private String phone;
 	private String address;
+	private double refund;
+	
 	
 	public Order() {
 		userName="";
 		orderList=new LinkedList<Item>();
 		card="";
 		status="Pending";
+		phone="";
+		address="";
 		id=-1;
 		
 	}
 	
-	public int getId() {
-		return id;
-	}
-
 	public LinkedList<Item> getOrderList(){
 		return orderList;
 		}
@@ -92,8 +93,16 @@ public class Order implements Serializable {
 		return address;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public int getId() {
+		return id;
+	}
+
+	public double getRefund() {
+		return refund;
+	}
+
+	public SimpleDateFormat getFormatter() {
+		return formatter;
 	}
 
 	public void setOrdreList(LinkedList<Item> _list) {
@@ -129,6 +138,14 @@ public class Order implements Serializable {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setRefund(double refund) {
+		this.refund = refund;
 	}
 
 	public void calculateTotalPrice() {
@@ -168,33 +185,25 @@ public class Order implements Serializable {
 //		order.orderList.add(item3);
 //		order.orderList.add(item3);
 		
-//		System.out.println(order.getDetails());
-//		String str = order.toString();	
-//		order.fromString(str);
-		
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		Date now = new Date();
-		order.setOrderDate(formatter.format(now));
-		order.setDeliveryDate(formatter.format(now));
-		order.setUserName("terkel");
-		order.setPhone("0551234569");
-		order.setAddress("Rotshild 30");
-		order.setCard("????????GZ!!!!!!");
-		order.calculateTotalPrice();
-		//order.setStatus("Pending");
-		
-//		Date dt= formatter.parse("28/01/2020 19:00");
-//		System.out.println(formatter.format(dt));
-		
 		
 		Command cmd = new Command("!User's orders");
 		cmd.obj=order;
-		jdbc.order(cmd);
+//		jdbc.order(cmd);
 		LinkedList<Order> userOrders = new LinkedList<Order>();
 		cmd.obj=(String) "terkel";
 		cmd=jdbc.listUserOrders(cmd);
+		userOrders=(LinkedList<Order>) cmd.obj;
+		int i = 0;
+		while(i<userOrders.size()) {
+			Command cmd2 = new Command("!cancel");
+			cmd2.obj=userOrders.get(i++);
+			cmd2=(Command) jdbc.cancelOrder(cmd2);
+		}
 		
-		System.out.println("END!");
+		
+//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		
+		
 //		
 //		System.out.println(formatter.format(order.getDeliveryDate()));
 //		System.out.println(formatter.format(order.getOrderDate()));
@@ -204,11 +213,28 @@ public class Order implements Serializable {
 //		String dateArgs[] = dateStr.split("[/ :]");
 //		System.out.println(Integer.parseInt(dateArgs[4]));
 //		
-//		Date firstdate = new Date();
-//		Date seconddate = formatter.parse("28/01/2020 15:00");
+//		Date now = new Date();
+//		Date seconddate = formatter.parse("30/01/2020 15:00");
 //		
+//		System.out.println(formatter.format(now));
 //		System.out.println(formatter.format(seconddate));
+//		System.out.println(now.toString());
+//		System.out.println(seconddate.toString());
+//		long l1 = now.getTime();
+//		long l2 = seconddate.getTime();
+//		long diff = l2-l1;
+//		long diff1 = l1-l2;
+//		System.out.println(diff);
+//		System.out.println(diff1);
+//		double hours = ((double)diff)/1000/60/60;
+//		
+//		System.out.println(hours);
+		
+		
 //		jdbc.cancelOrder(cmd);
+		
+		
+		System.out.println("END!");
 	}
 
 }

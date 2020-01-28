@@ -3,6 +3,7 @@
 // license found at www.lloseng.com 
 
 import java.io.*;
+import java.text.ParseException;
 
 import javax.net.ssl.SSLException;
 
@@ -109,7 +110,12 @@ public class EchoServer extends AbstractServer
 		  	  		break;
 				  	
 		  	  		case("!cancel"):
-		  	  			client.sendToClient(jdbc.cancelOrder(cmd));
+					try {
+						client.sendToClient(jdbc.cancelOrder(cmd));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 		  	  		break;
 			  	
 	  	  		
