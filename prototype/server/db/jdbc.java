@@ -254,9 +254,13 @@ public class jdbc {
 //			*********UPDATE ITEM IN CATALOG*********
 			if(cmd.obj instanceof Item) {
 				Item item = (Item) cmd.obj;
-				String sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+item.getName()+"' AND `shop` LIKE '"+item.getShop()+"'";
+				
+				String sql = "SELECT * FROM `Catalog` WHERE `id` = " + item.getId(); //"SELECT * FROM `Catalog` WHERE `name` LIKE '"+item.getName()+"' AND `shop` LIKE '"+item.getShop()+"'";
 				rs = stmt.executeQuery(sql);
 				rs.last();
+				rs.updateString("name", item.getName());
+				rs.updateString("shop", item.getShop());
+				rs.updateString("color", item.getColor());
 				rs.updateDouble("price", item.getPrice());
 				rs.updateInt("amount", item.getAmount());
 				rs.updateRow();

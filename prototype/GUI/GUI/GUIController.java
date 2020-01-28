@@ -184,9 +184,8 @@ public class GUIController {
 	    }
 	    
 	    localOrder.setOrdreList(cart);
-	    localOrder.setUser(localUser);
-	    localOrder.setOrderDate(new Date());
-	    
+	    localOrder.setUserName(localUser.getUserName());
+	    localOrder.setOrderDate((new Date()).toString());
 	    
 	    
     	URL url = getClass().getResource("Order.fxml");
@@ -302,7 +301,7 @@ public class GUIController {
 	    stage.setScene(scene);
 	}
     
-    @FXML void catalogEditItem(ActionEvent event) throws IOException {
+    @FXML void catalogEditItem(ActionEvent event) throws IOException, InterruptedException {
     	Item selected=catalogTable.getSelectionModel().getSelectedItem();
 		String _name=catalogMName.getText();
 		double _price=Double.valueOf(catalogMPrice.getText());
@@ -316,10 +315,32 @@ public class GUIController {
     	}
     	else {
     		item.setAmount(selected.getAmount());
+    		item.setId(selected.getId());
     		System.out.println(selected.getName()+" update request\n"+"to: "+item.stringItem());
     		catalogTxt.setText(selected.getName()+" update request\n"+"to: "+item.stringItem());
     		client.ClientConsole.send(new Command("!editItem",item));
+    		int status = replyWait();
+    		System.out.println("reply recieved: "+(status!=0));
+    		if(reply.msg.equals("editItem - Success")) {
+    			catalogTxt.setText("edit succesfuly "+item.stringItem());
+    			client.ClientConsole.send(new Command("!list"));
+    			status = replyWait();
+    			System.out.println("reply recieved: "+(status!=0));
+    			if(status!=0) {
+    				localCatalog=(Catalog)reply.obj;
+    				gotoCatalogM(event);
+    			}
+    		}
     	}
+    }
+    
+    @FXML void catalogMCopy(ActionEvent event) {
+    	Item selected=catalogTable.getSelectionModel().getSelectedItem();
+		catalogMName.setText(selected.getName());
+		catalogMPrice.setText(""+selected.getPrice());
+		catalogMColor.setText(selected.getColor());
+		catalogMPic.setText(selected.getPic());		
+		catalogMShop.setText(selected.getShop());
     }
     
     @FXML void catalogAddItem(ActionEvent event) throws IOException, InterruptedException {
@@ -337,7 +358,8 @@ public class GUIController {
 		int status = replyWait();
 		System.out.println("reply recieved: "+(status!=0));
 		if(reply.msg.equals("addItem Success")) {
-			client.ClientConsole.send(new Command("list"));
+			catalogTxt.setText("added succesfuly "+item.stringItem());
+			client.ClientConsole.send(new Command("!list"));
 			status = replyWait();
 			System.out.println("reply recieved: "+(status!=0));
 			if(status!=0) {

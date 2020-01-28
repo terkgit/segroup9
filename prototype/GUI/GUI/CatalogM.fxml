@@ -19,7 +19,7 @@
       </ImageView>
       <Button layoutX="533.0" layoutY="364.0" mnemonicParsing="false" text="Next" />
       <Button layoutX="132.0" layoutY="364.0" mnemonicParsing="false" text="Prev" />
-      <Button layoutX="320.0" layoutY="364.0" mnemonicParsing="false" text="Search" />
+      <Button layoutX="308.0" layoutY="364.0" mnemonicParsing="false" onAction="#catalogMCopy" prefHeight="25.0" prefWidth="83.0" text="Copy Item" />
       <TableView fx:id="catalogTable" layoutX="72.0" layoutY="26.0" prefHeight="304.0" prefWidth="525.0">
         <columns>
           <TableColumn fx:id="catalogTableName" prefWidth="157.0" text="Name" />
