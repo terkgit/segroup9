@@ -58,7 +58,8 @@ public class GUIController {
 	@FXML private TableView<Item> catalogTable;
     @FXML private TableColumn<Item, String> catalogTableName;
     @FXML private TableColumn<Item, Double> catalogTablePrice;
-    @FXML private TableColumn<Item, Integer> catalogTableAmount;
+    @FXML private TableColumn<Item, String> catalogTableShop;
+    @FXML private TableColumn<Item, String> catalogTableColor;
     @FXML private TableColumn<Item, String> catalogTablePic;
     @FXML private Text catalogTxt;
     @FXML private TextField catalogMinPriceTF;
@@ -69,8 +70,10 @@ public class GUIController {
     /**** CatalogM ****/
     @FXML private TextField catalogMName;
     @FXML private TextField catalogMPrice;
-    @FXML private TextField catalogMAmount;
+    @FXML private TextField catalogMShop;
+    @FXML private TextField catalogMColor;
     @FXML private TextField catalogMPic;
+    
     
     /**** Cart ****/
 	@FXML private TableView<Item> cartTable;
@@ -114,14 +117,18 @@ public class GUIController {
         if(welcomeLoginBtn!=null) {
         	if(localUser.getPermLevel().equals("SignedUser")) {
         		welcomeOrdersBtn.setVisible(true);
-        		if( !(localUser.getPermLevel().equals("ValidatedUser")) )
-        			welcomeValidateBtn.setVisible(true);
+        		welcomeValidateBtn.setVisible(true);   		
         	}
+        	else if(localUser.getPermLevel().equals("ValidatedUser")) {
+        		welcomeOrdersBtn.setVisible(true);
+        	}
+    			
         }
         if(catalogTable!=null) {
 	        catalogTableName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
 	        catalogTablePrice.setCellValueFactory(new PropertyValueFactory<Item, Double>("price"));
-	        catalogTableAmount.setCellValueFactory(new PropertyValueFactory<Item, Integer>("amount"));
+	        catalogTableShop.setCellValueFactory(new PropertyValueFactory<Item, String>("shop"));
+	        catalogTableColor.setCellValueFactory(new PropertyValueFactory<Item, String>("color"));
 	        catalogTablePic.setCellValueFactory(new PropertyValueFactory<Item, String>("pic"));
 	        catalogTableFill();
         }
@@ -299,14 +306,16 @@ public class GUIController {
     	Item selected=catalogTable.getSelectionModel().getSelectedItem();
 		String _name=catalogMName.getText();
 		double _price=Double.valueOf(catalogMPrice.getText());
-		int _amount=Integer.parseInt(catalogMAmount.getText());
+		String _color=catalogMColor.getText();
 		String _pic=catalogMPic.getText();
-    	Item item = new Item(_name,_price,"color",_amount,_pic);
+		String _shop=catalogMShop.getText();
+    	Item item = new Item(_name,_price,_color,_shop,_pic);
     	if (selected==null) {
     		System.out.println("select an item");
     		catalogTxt.setText("select an item");
     	}
     	else {
+    		item.setAmount(selected.getAmount());
     		System.out.println(selected.getName()+" update request\n"+"to: "+item.stringItem());
     		catalogTxt.setText(selected.getName()+" update request\n"+"to: "+item.stringItem());
     		client.ClientConsole.send(new Command("!editItem",item));
@@ -316,16 +325,26 @@ public class GUIController {
     @FXML void catalogAddItem(ActionEvent event) throws IOException, InterruptedException {
 		String _name=catalogMName.getText();
 		double _price=Double.valueOf(catalogMPrice.getText());
-		int _amount=Integer.parseInt(catalogMAmount.getText());
-		String _pic=catalogMPic.getText();
+		String _color=catalogMColor.getText();
+		String _pic=catalogMPic.getText();		
+		String _shop=catalogMShop.getText();
 		
-    	Item item = new Item(_name,_price,"color",_amount,_pic);
+    	Item item = new Item(_name,_price,_color,_shop,_pic);
 	    
     	System.out.println("add item: "+item.stringItem());
 		catalogTxt.setText("add request to item: "+item.stringItem());
 		client.ClientConsole.send(new Command("!addItem",item));
 		int status = replyWait();
 		System.out.println("reply recieved: "+(status!=0));
+		if(reply.msg.equals("addItem Success")) {
+			client.ClientConsole.send(new Command("list"));
+			status = replyWait();
+			System.out.println("reply recieved: "+(status!=0));
+			if(status!=0) {
+				localCatalog=(Catalog)reply.obj;
+				gotoCatalogM(event);
+			}
+		}
     }
     
     @SuppressWarnings("unused")private void __Login__() {}
@@ -333,15 +352,7 @@ public class GUIController {
 	@FXML void handleLogin(ActionEvent event) throws IOException, InterruptedException {
 		String usertxt=loginUserTxt.getText();
 	    userTxtStr=usertxt;
-		if(usertxt.equals("admin")) {    	
-	    	URL url = getClass().getResource("debug.fxml");
-	        AnchorPane pane = FXMLLoader.load( url );
-	        Scene scene = new Scene( pane );
-	        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-	        stage.setScene(scene);
-	        return;
-	    }
-		else if(usertxt.equals("Manager")) {    	
+		if(usertxt.equals("Manager")) {    	
 	    	gotoCatalogM(event);
 	        return;
 		}
@@ -387,7 +398,7 @@ public class GUIController {
 		client.ClientConsole.send(cmd);
 		int status = replyWait();
 		System.out.println("reply recieved: "+(status!=0));
-		if(reply.msg.contentEquals("Success")) {
+		if(reply.msg.contentEquals("signUp - Success")) {
 			generalMsg.setText("User: "+((User)cmd.obj).getUserName()+" successfuly Signed up, please Login");
 		}
 		else {
@@ -400,7 +411,7 @@ public class GUIController {
 		client.ClientConsole.send(new Command("!validate"));
 		int status = replyWait();
 		System.out.println("reply recieved: "+(status!=0));
-		if(reply.msg.equals("User Valid")) {
+		if(reply.msg.equals("validate - Success")) {
 			System.out.println("User Validated");
 			gotoCatalog(event);
 		}

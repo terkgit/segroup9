@@ -33,6 +33,8 @@ public class jdbc {
 				itm.setId(rs.getInt("id")); 
 				itm.setName(rs.getString("name"));
 				itm.setAmount(rs.getInt("amount"));
+				itm.setColor(rs.getString("color"));
+				itm.setPic(rs.getString("pic"));
 				itm.setPrice(rs.getInt("price"));
 				itm.setShop(rs.getString("shop"));
 				
@@ -95,6 +97,8 @@ public class jdbc {
 					rs.updateDouble("price", item.getPrice());
 					rs.updateString("shop", item.getShop());
 					rs.updateInt("amount", item.getAmount());
+					rs.updateString("color", item.getColor());
+					rs.updateString("pic", item.getPic());
 					rs.insertRow();
 					result = "addItem Success";
 				}

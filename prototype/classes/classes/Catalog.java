@@ -16,7 +16,7 @@ public class Catalog implements Serializable {
 	}
 	
 	public void printCatalog() {
-		String result=String.format("ID %3s name%14s price%3s amount%s shop\n"," |"," |"," |"," |");
+		String result=String.format("ID %3s name%14s price%4s Shop%9s shop\n"," |"," |"," |"," |");
 		result=result.concat("-----------------------------------------------------------------\n");
 		System.out.print(result);
 		

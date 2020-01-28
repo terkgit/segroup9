@@ -18,15 +18,14 @@
             <Image url="@welcomeb.jpg" />
          </image>
       </ImageView>
-      <Button layoutX="533.0" layoutY="364.0" mnemonicParsing="false" text="Next" />
-      <Button layoutX="132.0" layoutY="364.0" mnemonicParsing="false" text="Prev" />
       <Button layoutX="320.0" layoutY="364.0" mnemonicParsing="false" onAction="#catalogSearch" text="Search" />
       <TableView fx:id="catalogTable" layoutX="72.0" layoutY="26.0" prefHeight="331.0" prefWidth="525.0">
         <columns>
-          <TableColumn fx:id="catalogTableName" prefWidth="186.0" text="Name" />
-            <TableColumn fx:id="catalogTablePrice" prefWidth="64.0" text="Price" />
-          <TableColumn fx:id="catalogTableAmount" prefWidth="56.0" text="Amount" />
-            <TableColumn fx:id="catalogTablePic" prefWidth="218.0" text="Pic" />
+          <TableColumn fx:id="catalogTableName" prefWidth="157.0" text="Name" />
+            <TableColumn fx:id="catalogTablePrice" prefWidth="41.0" text="Price" />
+            <TableColumn fx:id="catalogTableShop" prefWidth="136.0" text="Shop" />
+            <TableColumn fx:id="catalogTableColor" minWidth="0.0" prefWidth="77.0" text="Color" />
+            <TableColumn fx:id="catalogTablePic" prefWidth="112.0" text="Pic" />
         </columns>
       </TableView>
       <Button layoutX="213.0" layoutY="364.0" mnemonicParsing="false" onAction="#addToCart" text="Add To Cart" />

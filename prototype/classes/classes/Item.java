@@ -27,13 +27,14 @@ public class Item implements Serializable {
 		pic=_pic;
 	}
 	
-	public Item(String _name, double _price, String _color, int _amount, String _pic) {
+	public Item(String _name, double _price, String _color, String _shop, String _pic) {
 		name=_name;
 		price=_price;
 		color=_color;
-		amount=_amount;
+		amount=10;
 		id=-1;
-		shop="";
+		pic=_pic;
+		shop=_shop;
 	}
 	
 	public Item() {
@@ -67,12 +68,12 @@ public class Item implements Serializable {
 	public void setColor(String color) {this.color = color;}
 	
 	public void printItem() {
-		String line = String.format("%-4d | %-16s | %6g |  %4d  | \"%s\"\n", id, name, price, amount, shop);
+		String line = String.format("%-4d | %-16s | %6g |  %8s  | \"%s\"\n", id, name, price, color, shop);
 		System.out.print(line);
 	}
 	
 	public String stringItem() {
-		String line = String.format("%-4d | %-16s | %6g |  %4d  | \"%s\"\n", id, name, price, amount, shop);
+		String line = String.format("%-4d | %-16s | %6g |  %8s  | \"%s\"\n", id, name, price, color, shop);
 		return line;
 	}
 	

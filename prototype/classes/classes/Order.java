@@ -15,6 +15,8 @@ public class Order implements Serializable {
 	private LinkedList<Item> orderList;
 	private  Date orderDate;
 	private  Date deliveryDate;
+	private String adress;
+	private String phone;
 	private String card;
 	private static String details ;
 	private static  double price;
@@ -25,7 +27,6 @@ public class Order implements Serializable {
 		orderList=new LinkedList<Item>();
 		card="";
 		status="Pending";
-		
 	}
 	
 	public LinkedList<Item> getOrderList(){
@@ -145,6 +146,22 @@ public class Order implements Serializable {
 		
 		
 		
+	}
+
+	public String getAdress() {
+		return adress;
+	}
+
+	public void setAdress(String adress) {
+		this.adress = adress;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

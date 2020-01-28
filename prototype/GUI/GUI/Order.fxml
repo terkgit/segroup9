@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -23,17 +24,21 @@
       <Button layoutX="290.0" layoutY="364.0" mnemonicParsing="false" onAction="#orderPurchace" text="Purchase" />
       <Button layoutX="186.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Catalog" />
       <Label layoutX="72.0" layoutY="2.0" prefHeight="25.0" prefWidth="77.0" text="Order" />
-      <TextArea fx:id="orderDetailsTA" layoutX="115.0" layoutY="39.0" prefHeight="163.0" prefWidth="454.0" text="Order Details:" />
-      <TextField editable="false" layoutX="115.0" layoutY="208.0" prefHeight="25.0" prefWidth="71.0" text="Address:" />
-      <TextField editable="false" layoutX="115.0" layoutY="240.0" prefHeight="25.0" prefWidth="71.0" text="Add Card:" />
-      <CheckBox fx:id="orderCardCB" layoutX="193.0" layoutY="244.0" mnemonicParsing="false" text=" " />
+      <TextArea fx:id="orderDetailsTA" layoutX="115.0" layoutY="39.0" prefHeight="147.0" prefWidth="454.0" text="Order Details:" />
+      <TextField editable="false" layoutX="115.0" layoutY="218.0" prefHeight="25.0" prefWidth="71.0" text="Address:" />
+      <TextField editable="false" layoutX="115.0" layoutY="246.0" prefHeight="25.0" prefWidth="71.0" text="Add Card:" />
+      <CheckBox fx:id="orderCardCB" layoutX="197.0" layoutY="250.0" mnemonicParsing="false" text=" " />
       <TextArea fx:id="orderCardTA" layoutX="115.0" layoutY="277.0" prefHeight="84.0" prefWidth="454.0" text="Card Text:" />
-      <TextField fx:id="orderAdressTF" layoutX="197.0" layoutY="208.0" prefHeight="25.0" prefWidth="371.0" />
+      <TextField fx:id="orderAdressTF" layoutX="197.0" layoutY="218.0" prefHeight="25.0" prefWidth="371.0" />
       <Button layoutX="403.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCart" text="Cart" />
       <Text fx:id="generalMsg" layoutX="177.0" layoutY="403.0" strokeType="OUTSIDE" strokeWidth="0.0">
          <font>
             <Font size="10.0" />
          </font>
       </Text>
+      <TextField editable="false" layoutX="114.0" layoutY="190.0" prefHeight="25.0" prefWidth="71.0" text="Phone:" />
+      <TextField fx:id="orderPhoneTF" layoutX="196.0" layoutY="190.0" prefHeight="25.0" prefWidth="94.0" />
+      <DatePicker fx:id="orderDate" layoutX="395.0" layoutY="190.0" />
+      <TextField editable="false" layoutX="297.0" layoutY="190.0" prefHeight="25.0" prefWidth="94.0" text="Delivery Date" />
    </children>
 </AnchorPane>
