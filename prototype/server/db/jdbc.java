@@ -71,7 +71,7 @@ public class jdbc {
 	public static Command addNewObjectToDataBase(Command cmd){
 		Connection conn = null;
 		Statement stmt = null;
-		String result = null;
+		String result = "unknown error";
 		try {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -85,7 +85,7 @@ public class jdbc {
 				sql = "SELECT * FROM `Catalog` WHERE `name` LIKE '"+item.getName()+"' AND `shop` LIKE '"+item.getShop()+"'";
 				rs = stmt.executeQuery(sql);
 				if(rs.last())
-					result = "alredy exists";
+					result = "addItem - item alredy exists";
 				else {
 					sql = "SELECT * FROM `Catalog`";
 					rs = stmt.executeQuery(sql);
@@ -96,7 +96,7 @@ public class jdbc {
 					rs.updateString("shop", item.getShop());
 					rs.updateInt("amount", item.getAmount());
 					rs.insertRow();
-					result = "Success";
+					result = "addItem Success";
 				}
 			}
 //			*********SIGN UP - ADD NEW USER TO DATABASE*********
@@ -105,14 +105,14 @@ public class jdbc {
 				sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
 				if(rs.last()) 		//check if user name already exist
-					result = "alredy exists";
+					result = "signUp - Username alredy exists";
 				else{
 					rs.moveToInsertRow();
 					rs.updateString("username", user.getUserName());
 					rs.updateString("password", user.getPassword());
 					rs.updateString("permissionLevel", user.getPermLevel());
 					rs.insertRow();
-					result = "Success";
+					result = "signUp - Success";
 					
 				}
 			}
@@ -130,8 +130,7 @@ public class jdbc {
 				rs.updateDate("deliveryDate",new java.sql.Date(order.getDeliveryDate().getTime()));
 				rs.updateString("status", order.getStatus());
 				rs.insertRow();
-				result = "Success";
-				
+				result = "order - Success";
 			}
 			rs.close();
 			stmt.close();
@@ -180,13 +179,13 @@ public class jdbc {
 				rs.last();
 				String pass=rs.getString("password");
 				if(!pass.equals(sUser.getPassword()))
-					result.msg = "wrong password";
+					result.msg = "validate - Wrong Password!";
 				else {
 					rs.updateString("name", sUser.getName());
 					rs.updateInt("id", sUser.getId());
 					rs.updateInt("credit card", sUser.getCreditCard());
 					rs.updateRow();
-					result.msg = "validated";
+					result.msg = "validate - Success";
 				}
 			}
 			
@@ -199,7 +198,7 @@ public class jdbc {
 				rs.updateDouble("price", item.getPrice());
 				rs.updateInt("amount", item.getAmount());
 				rs.updateRow();
-				result.msg = "updated";
+				result.msg = "editItem - Success";
 			}
 			
 //			*********LOG IN*********
@@ -208,16 +207,16 @@ public class jdbc {
 				String sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
 				if(!rs.last()) {
-					result.msg = "wrong username";
+					result.msg = "login - wrong username";
 					return result;
 				}
 				String pass=rs.getString("password");
 				if(!pass.equals(user.getPassword()))
-					result.msg = "wrong password";
+					result.msg = "login - wrong password";
 				else {
 					user.setPermLevel("SignedUser");
 					result.obj=user;
-					result.msg="Log In Success";
+					result.msg="login Success";
 				}
 			}
 			
@@ -286,6 +285,11 @@ public class jdbc {
 	}
 
 	public static Object cancelOrder(Command cmd) {
+		return  updateItemInDataBase(cmd);
+	}
+
+
+	public static Object deliverOrder(Command cmd) {
 		return  updateItemInDataBase(cmd);
 	}
 	

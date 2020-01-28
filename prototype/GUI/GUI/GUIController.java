@@ -343,7 +343,7 @@ public class GUIController {
 	        stage.setScene(scene);
 	        return;
 	    }
-		else if(usertxt.equals("manager")) {    	
+		else if(usertxt.equals("Manager")) {    	
 	    	gotoCatalogM(event);
 	        return;
 		}
@@ -390,21 +390,10 @@ public class GUIController {
 		int status = replyWait();
 		System.out.println("reply recieved: "+(status!=0));
 		if(reply.msg.contentEquals("Success")) {
-			
-			cmd.obj=new User(loginUserTxt.getText(),loginPassTxt.getText());
-			client.ClientConsole.send(new Command("!login",reply.obj));
-			status = replyWait();
-			System.out.println("reply recieved: "+(status!=0));
-			if(reply.msg.equals("Log In Success")) {
-				localUser=(User)reply.obj;
-				gotoWelcome(event);
-			}
-			else
-				generalMsg.setText(reply.msg);
-			gotoWelcome(event);
+			generalMsg.setText("User: "+((User)cmd.obj).getUserName()+" successfuly Signed up, please Login");
 		}
 		else {
-//			System.out.println("signUp failed");
+			System.out.println("signUp failed, "+reply.msg);
 			generalMsg.setText("signUp failed, "+reply.msg);
 		}
 	}

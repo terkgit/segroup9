@@ -108,8 +108,12 @@ public class EchoServer extends AbstractServer
 		  	  			client.sendToClient(jdbc.validate(cmd));
 		  	  		break;
 				  	
-		  	  		case("!cancel"):
+		  	  		case("!cancelOrder"):
 		  	  			client.sendToClient(jdbc.cancelOrder(cmd));
+		  	  		break;
+				  	
+		  	  		case("!deliverOrder"):
+		  	  			client.sendToClient(jdbc.deliverOrder(cmd));
 		  	  		break;
 			  	
 	  	  		
