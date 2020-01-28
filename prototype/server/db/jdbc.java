@@ -82,6 +82,7 @@ public class jdbc {
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				Order order = new Order();
+				order.setId(rs.getInt("id"));
 				order.setUserName(rs.getString("username"));
 				order.fromString(rs.getString("details"));
 				order.setCard(rs.getString("card"));
@@ -245,7 +246,8 @@ public class jdbc {
 					rs.updateInt("id", sUser.getId());
 					rs.updateInt("credit card", sUser.getCreditCard());
 					rs.updateRow();
-					result.msg = "validated";
+					((User) result.obj).setPermLevel("Validated");
+					result.msg = "Validated";
 				}
 			}
 			
@@ -258,7 +260,7 @@ public class jdbc {
 				rs.updateDouble("price", item.getPrice());
 				rs.updateInt("amount", item.getAmount());
 				rs.updateRow();
-				result.msg = "updated";
+				result.msg = "Item Updated";
 			}
 			
 //			*********LOG IN*********
@@ -267,12 +269,12 @@ public class jdbc {
 				String sql = "SELECT * FROM Users WHERE username LIKE '" + user.getUserName()+"'";
 				rs = stmt.executeQuery(sql);
 				if(!rs.last()) {
-					result.msg = "wrong username";
+					result.msg = "Wrong Username";
 					return result;
 				}
 				String pass=rs.getString("password");
 				if(!pass.equals(user.getPassword()))
-					result.msg = "wrong password";
+					result.msg = "Wrong Password";
 				else {
 					user.setPermLevel("SignedUser");
 					result.obj=user;

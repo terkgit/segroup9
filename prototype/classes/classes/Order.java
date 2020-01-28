@@ -16,6 +16,7 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static DecimalFormat df = new DecimalFormat("0.00");
 	
+	private int id;
 	private String userName;
 	private LinkedList<Item> orderList;
 	private String orderDate;
@@ -32,9 +33,14 @@ public class Order implements Serializable {
 		orderList=new LinkedList<Item>();
 		card="";
 		status="Pending";
+		id=-1;
 		
 	}
 	
+	public int getId() {
+		return id;
+	}
+
 	public LinkedList<Item> getOrderList(){
 		return orderList;
 		}
@@ -84,6 +90,10 @@ public class Order implements Serializable {
 
 	public String getAddress() {
 		return address;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public void setOrdreList(LinkedList<Item> _list) {
