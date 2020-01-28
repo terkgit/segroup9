@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -84,6 +85,7 @@ public class jdbc {
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				Order order = new Order();
+				order.setId(rs.getInt("id"));
 				order.setUserName(rs.getString("username"));
 				order.fromString(rs.getString("details"));
 				order.setCard(rs.getString("card"));
@@ -247,6 +249,7 @@ public class jdbc {
 					rs.updateInt("id", sUser.getId());
 					rs.updateInt("credit card", sUser.getCreditCard());
 					rs.updateRow();
+					((User) result.obj).setPermLevel("Validated");
 					result.msg = "validate - Success";
 				}
 			}
@@ -290,10 +293,12 @@ public class jdbc {
 			if(cmd.obj instanceof Order) {
 				Order order = new Order();
 				order=(Order) cmd.obj;
-				String sql = "SELECT * FROM `Orders` WHERE `username` LIKE '"+order.getUserName()+"' AND `orderDate` = '"+order.getOrderDate()+"'";
+				String sql = "SELECT * FROM `Orders` WHERE `id`= "+order.getId();
 				rs = stmt.executeQuery(sql);
 				rs.last();
 				rs.updateString("status", order.getStatus());
+				if(cmd.msg.equals("!cancel"))
+					rs.updateDouble("refund", order.getRefund());
 				rs.updateRow();
 				result.msg = "Status Updated";
 			}
@@ -350,15 +355,23 @@ public class jdbc {
 		return addNewObjectToDataBase(cmd);
 	}
 
-	public static Object cancelOrder(Command cmd) {
+	public static Object cancelOrder(Command cmd) throws ParseException {
 		Order order = new Order();
 		order=(Order) cmd.obj;
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
-		String deliverDate = formatter.format(order.getDeliveryDate());
-		String now = formatter.format(new Date());
-		String[] delArgs = deliverDate.split("[/ :]");
-		String[] nowArgs = now.split("[/ :]");
 		
+//		Date now = new Date();
+		Date deliveryDate = order.getFormatter().parse(order.getDeliveryDate());
+		long nowMilli = new Date().getTime(); 					//***Convert Current Time to Milliseconds
+		long deliverMilli = deliveryDate.getTime();		//***Convert Delivery Time to Milliseconds
+		long diff = deliverMilli - nowMilli;			//***Calculated Difference between two dates 
+		double hours = ((double)diff)/1000/60/60;		//***Convert Milliseconds to Hours/ 1 second = 1000 milliseconds/ 1 minute = 60 seconds/ 1 hour = 60 minutes 
+		if(hours < 1)
+			order.setRefund(0);
+		else if(hours>=1 && hours<3)
+			order.setRefund(order.getPrice()*0.5);
+		else
+			order.setRefund(order.getPrice());
+		order.setStatus("Canceled");
 		return  updateItemInDataBase(cmd);
 	}
 
