@@ -134,6 +134,10 @@ public class EchoServer extends AbstractServer
 		  	  			cmd.msg="Loged Out";
 		  	  			client.sendToClient(cmd);
 		  	  		break;
+		  	  		
+		  	  		case("!getOrders"):
+		  	  			client.sendToClient(jdbc.listUserOrders(cmd));
+		  	  		break;
 			  	
 	  	  		
 	  			} // switch
