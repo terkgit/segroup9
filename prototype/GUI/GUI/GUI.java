@@ -21,10 +21,7 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) throws IOException { 
     	
-    	//  start client - local 127.0.0.1 5555
-    	String[] args = {"GUI","127.0.0.1","5555"};
-		System.out.println("starting client...");
-		client.ClientConsole.start(args);
+    	
     	
 		GUIController.initStatics();
 		
@@ -41,6 +38,11 @@ public class GUI extends Application {
     }
 
     public static void main(String[] args) {
+    	
+    	// expected args: GUI 127.0.0.1 5555
+		System.out.println("starting client...");
+		client.ClientConsole.start(args);
+    	
         launch();
     }
 }
