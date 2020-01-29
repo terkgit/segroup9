@@ -36,6 +36,7 @@ public class GUIController {
 	/** Client Static Variables  **/
 	private static Catalog localCatalog;
 	private static Order localOrder;
+	private static LinkedList<Order> localOrderList; 
 	private static User localUser;
 	private static LinkedList<Item> cart;
 	private static LinkedList<Item> searchList;
@@ -74,12 +75,19 @@ public class GUIController {
     @FXML private TextField catalogMColor;
     @FXML private TextField catalogMPic;
     
+
+    /**** Orders ****/
+	@FXML private TableView<Order> ordersTable;
+    @FXML private TableColumn<Order, Integer> ordersTableID;
+    @FXML private TableColumn<Order, String> ordersTableDetails;
+    @FXML private TableColumn<Order, String> ordersTableStatus;
     
     /**** Cart ****/
 	@FXML private TableView<Item> cartTable;
     @FXML private TableColumn<Item, String> cartTableName;
     @FXML private TableColumn<Item, Double> cartTablePrice;
 
+    
     
     
     /**** Welcome ****/    
@@ -125,6 +133,12 @@ public class GUIController {
         		welcomeOrdersBtn.setVisible(true);
         	}
     			
+        }
+        if(ordersTable!=null) {
+            ordersTableDetails.setCellValueFactory(new PropertyValueFactory<Order, String>("details"));
+        	ordersTableID.setCellValueFactory(new PropertyValueFactory<Order, Integer>("id"));
+            ordersTableStatus.setCellValueFactory(new PropertyValueFactory<Order, String>("status"));
+            ordersTableFill();
         }
         if(catalogTable!=null) {
 	        catalogTableName.setCellValueFactory(new PropertyValueFactory<Item, String>("name"));
@@ -458,7 +472,35 @@ public class GUIController {
 		}
 		
 	}
+
+	@SuppressWarnings("unused")private void __OrderList__() {}
 	
+	@FXML void gotoOrderList(ActionEvent event) throws IOException, InterruptedException {
+		
+		client.ClientConsole.send(new Command("!getOrders"));
+		int status = replyWait();
+		System.out.println("reply recieved: "+(status!=0));
+		
+		URL url = getClass().getResource("OrderList.fxml");
+	    AnchorPane pane = FXMLLoader.load( url );
+	    Scene scene = new Scene( pane );
+	    Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    stage.setTitle(localUser.getUserName()+" Orders");
+	    stage.setScene(scene);
+	    stage.show();
+	}
+	
+	private void ordersTableFill() {
+    	if(localOrderList==null)
+    		System.out.println("order list empty");
+    	else {
+        	ObservableList<Order> ctl = ordersTable.getItems();
+        	localOrderList.forEach((item)->{
+        		ctl.add(item);
+        	});
+    	}
+	}
+
 	@SuppressWarnings("unused")private void __Welcome__() {}
     
     @FXML void gotoWelcome(ActionEvent event) throws IOException{

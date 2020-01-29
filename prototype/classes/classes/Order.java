@@ -38,7 +38,7 @@ public class Order implements Serializable {
 		status="Pending";
 		phone="";
 		address="";
-		id=-1;
+		setId(-1);
 		
 	}
 	
@@ -93,9 +93,7 @@ public class Order implements Serializable {
 		return address;
 	}
 
-	public int getId() {
-		return id;
-	}
+
 
 	public double getRefund() {
 		return refund;
@@ -140,9 +138,7 @@ public class Order implements Serializable {
 		this.address = address;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
+
 
 	public void setRefund(double refund) {
 		this.refund = refund;
@@ -235,6 +231,14 @@ public class Order implements Serializable {
 		
 		
 		System.out.println("END!");
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }
