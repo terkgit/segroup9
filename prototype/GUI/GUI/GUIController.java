@@ -94,7 +94,9 @@ public class GUIController {
 //    @FXML private Button loginLoginBtn; 
     
     /**** SingUp ****/     
-    @FXML private TextField signupTxt;
+    @FXML private TextField signupName;
+    @FXML private TextField signupID;
+    @FXML private TextField signupPayment;
     
     /**** Welcome/Login ****/
 //    @FXML private Button catalogBtn;
@@ -177,7 +179,7 @@ public class GUIController {
 	    	return;
 	    }
 	    
-	    if( !(localUser.getPermLevel().equals("SignedUser")) ) {
+	    if( !(localUser.getPermLevel().equals("SignedUser")) && !(localUser.getPermLevel().equals("Validated"))) {
 	    	System.out.println("permission: "+localUser.getPermLevel()+" expected: SignedUser");
 	    	generalMsg.setText(localUser.getUserName()+", please login first");
 	    	return;
@@ -197,8 +199,9 @@ public class GUIController {
 	}
     
     @FXML void orderPurchace(ActionEvent event) throws IOException {
-    	if(localUser.getPermLevel().equals("validatedUser")) {
+    	if(localUser.getPermLevel().equals("Validated")) {
     		System.out.println("{---\nsending !order"+localOrder.getDetails()+"---}");
+    		localOrder.setDeliveryDate(orderDate.getValue().toString());
     		client.ClientConsole.send(new Command("!order",localOrder));
     	}
     	else {
@@ -430,7 +433,12 @@ public class GUIController {
 	}
 
 	@FXML void signupValidate(ActionEvent event) throws InterruptedException, IOException{
-		client.ClientConsole.send(new Command("!validate"));
+
+		localUser.setCreditCard(Integer.parseInt(signupPayment.getText()));
+		localUser.setId(Integer.parseInt(signupID.getText()));
+		localUser.setName(signupName.getText());
+		
+		client.ClientConsole.send(new Command("!validate",localUser));
 		int status = replyWait();
 		System.out.println("reply recieved: "+(status!=0));
 		if(reply.msg.equals("validate - Success")) {
@@ -467,7 +475,6 @@ public class GUIController {
 	}
 
 	public static void display(Command cmd) {
-		// TODO Auto-generated method stub
 		reply=cmd;
 		if(cmd.obj instanceof Catalog) {
 			System.out.println("recieved catalog from server");

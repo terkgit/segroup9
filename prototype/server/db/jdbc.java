@@ -246,6 +246,7 @@ public class jdbc {
 					result.msg = "validate - Wrong Password!";
 				else {
 					rs.updateString("name", sUser.getName());
+					rs.updateString("permissionLevel", "Validated");
 					rs.updateInt("id", sUser.getId());
 					rs.updateInt("credit card", sUser.getCreditCard());
 					rs.updateRow();
@@ -283,7 +284,7 @@ public class jdbc {
 				if(!pass.equals(user.getPassword()))
 					result.msg = "login - wrong password";
 				else {
-					user.setPermLevel("SignedUser");
+					user.setPermLevel(rs.getString("permissionLevel"));
 					result.obj=user;
 					result.msg="login Success";
 				}

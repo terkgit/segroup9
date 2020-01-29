@@ -21,23 +21,23 @@
       </ImageView>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eed881" height="331.0" layoutX="131.0" layoutY="29.0" stroke="BLACK" strokeType="INSIDE" width="433.0" />
       <Button layoutX="186.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoCatalog" text="Skip" />
-      <TextField layoutX="243.0" layoutY="68.0" prefHeight="25.0" prefWidth="305.0" />
+      <TextField fx:id="signupName" layoutX="243.0" layoutY="68.0" prefHeight="25.0" prefWidth="305.0" />
       <Button layoutX="419.0" layoutY="364.0" mnemonicParsing="false" onAction="#signupValidate" prefHeight="25.0" prefWidth="71.0" text="Validate" />
-      <TextField editable="false" layoutX="147.0" layoutY="68.0" prefHeight="25.0" prefWidth="71.0" text="Adress:" />
-      <TextField editable="false" layoutX="147.0" layoutY="114.0" prefHeight="25.0" prefWidth="71.0" text="Phone:" />
-      <PasswordField layoutX="243.0" layoutY="114.0" prefHeight="25.0" prefWidth="305.0" />
+      <TextField editable="false" layoutX="147.0" layoutY="68.0" prefHeight="25.0" prefWidth="71.0" text="Full Name:" />
+      <TextField editable="false" layoutX="147.0" layoutY="114.0" prefHeight="25.0" prefWidth="71.0" text="ID" />
+      <PasswordField fx:id="signupID" layoutX="243.0" layoutY="114.0" prefHeight="25.0" prefWidth="305.0" />
       <Text fx:id="userTxt" layoutX="320.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="usertxt">
          <font>
             <Font size="10.0" />
          </font>
       </Text>
       <TextField editable="false" layoutX="147.0" layoutY="169.0" prefHeight="25.0" prefWidth="71.0" text="Payment:" />
-      <PasswordField layoutX="243.0" layoutY="169.0" prefHeight="25.0" prefWidth="305.0" />
+      <PasswordField fx:id="signupPayment" layoutX="243.0" layoutY="169.0" prefHeight="25.0" prefWidth="305.0" />
       <CheckBox layoutX="243.0" layoutY="225.0" mnemonicParsing="false" text=" " />
       <TextField editable="false" layoutX="147.0" layoutY="221.0" prefHeight="25.0" prefWidth="71.0" text="Member" />
-      <Label layoutX="149.0" layoutY="94.0" prefHeight="17.0" prefWidth="400.0" text="Enter your address " />
-      <Label layoutX="149.0" layoutY="146.0" prefHeight="17.0" prefWidth="400.0" text="Enter your phone number" />
-      <Label layoutX="149.0" layoutY="200.0" prefHeight="17.0" prefWidth="400.0" text="Enter payment method details" />
+      <Label layoutX="149.0" layoutY="90.0" prefHeight="17.0" prefWidth="400.0" text="Enter your Full Name" />
+      <Label layoutX="149.0" layoutY="137.0" prefHeight="17.0" prefWidth="400.0" text="Enter your ID" />
+      <Label layoutX="149.0" layoutY="194.0" prefHeight="17.0" prefWidth="400.0" text="Enter credit card details" />
       <Label layoutX="150.0" layoutY="248.0" prefHeight="17.0" prefWidth="400.0" text="Check if you want a monthly membership and get our special offers!" />
       <Label layoutX="168.0" layoutY="343.0" prefHeight="17.0" prefWidth="87.0" text="(Validate later )" />
       <Label layoutX="413.0" layoutY="343.0" prefHeight="17.0" prefWidth="117.0" text="(Validate account )" />
