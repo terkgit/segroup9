@@ -4,6 +4,7 @@
 
 import java.io.*;
 import java.text.ParseException;
+import java.util.LinkedList;
 
 import javax.net.ssl.SSLException;
 
@@ -28,6 +29,8 @@ public class EchoServer extends AbstractServer
    * The default port to listen on.
    */
   final public static int DEFAULT_PORT =5555;
+  
+  private LinkedList<String> userList;
   
   /**
    * The interface type variable. It allows the implementation of 
@@ -78,7 +81,6 @@ public class EchoServer extends AbstractServer
 		if(cmd.msg.startsWith("!")) {
 			try {
     		  	String args[] = cmd.msg.trim().split("\\s+");
-    		  	Command reply;
     		  	System.out.println(args[0]+" command");
     		  	switch (args[0]) {
 	  	  			case ("!list"):
@@ -86,7 +88,16 @@ public class EchoServer extends AbstractServer
 				  	break;
 		
 		  	  		case ("!login"):
-		  	  			client.sendToClient(jdbc.logIn(cmd));
+		  	  			if(userList.contains(((User) cmd.obj).getUserName())) {
+		  	  				cmd.msg="login - user alredy loged in";
+		  	  			}
+		  	  			else {
+		  	  				Command res = new Command("");
+		  	  				res=jdbc.logIn(cmd);
+		  	  				if(res.msg.equals("login Success"))
+		  	  					userList.add(((User) cmd.obj).getUserName());
+		  	  			}
+		  	  			client.sendToClient(cmd);
 				  	break;
 		
 		  	  		case ("!signUp"):
@@ -117,6 +128,16 @@ public class EchoServer extends AbstractServer
 						e.printStackTrace();
 					}
 		  	  		break;
+		  	  		
+		  	  		case("!logout"):
+		  	  			userList.remove(((User) cmd.obj).getUserName());
+		  	  			cmd.msg="Loged Out";
+		  	  			client.sendToClient(cmd);
+		  	  		break;
+		  	  		
+		  	  		case("!getOrders"):
+		  	  			client.sendToClient(jdbc.listUserOrders(cmd));
+		  	  		break;
 			  	
 	  	  		
 	  			} // switch
@@ -146,6 +167,7 @@ public class EchoServer extends AbstractServer
    */
   protected void serverStarted()
   {
+	  userList = new LinkedList<String>();
     System.out.println
       ("Server listening for connections on port " + getPort());
   }
