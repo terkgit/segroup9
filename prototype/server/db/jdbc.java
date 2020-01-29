@@ -81,7 +81,7 @@ public class jdbc {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			String sql = "SELECT * FROM `Orders` WHERE `username` LIKE '"+(String)cmd.obj+"'";
+			String sql = "SELECT * FROM `Orders` WHERE `username` LIKE '"+((User)cmd.obj).getUserName()+"'";
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				Order order = new Order();

@@ -93,8 +93,8 @@ public class EchoServer extends AbstractServer
 		  	  			}
 		  	  			else {
 		  	  				Command res = new Command("");
-		  	  				res=jdbc.logIn(cmd);
-		  	  				if(res.msg.equals("login Success"))
+		  	  				cmd=jdbc.logIn(cmd);
+		  	  				if(cmd.msg.equals("login Success"))
 		  	  					userList.add(((User) cmd.obj).getUserName());
 		  	  			}
 		  	  			client.sendToClient(cmd);

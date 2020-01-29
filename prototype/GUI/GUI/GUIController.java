@@ -477,9 +477,10 @@ public class GUIController {
 	
 	@FXML void gotoOrderList(ActionEvent event) throws IOException, InterruptedException {
 		
-		client.ClientConsole.send(new Command("!getOrders"));
+		client.ClientConsole.send(new Command("!getOrders",localUser));
 		int status = replyWait();
 		System.out.println("reply recieved: "+(status!=0));
+		localOrderList=(LinkedList<Order>)reply.obj;
 		
 		URL url = getClass().getResource("OrderList.fxml");
 	    AnchorPane pane = FXMLLoader.load( url );
