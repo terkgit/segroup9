@@ -81,7 +81,6 @@ public class EchoServer extends AbstractServer
 		if(cmd.msg.startsWith("!")) {
 			try {
     		  	String args[] = cmd.msg.trim().split("\\s+");
-    		  	Command reply;
     		  	System.out.println(args[0]+" command");
     		  	switch (args[0]) {
 	  	  			case ("!list"):
@@ -128,6 +127,12 @@ public class EchoServer extends AbstractServer
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+		  	  		break;
+		  	  		
+		  	  		case("!logout"):
+		  	  			userList.remove(((User) cmd.obj).getUserName());
+		  	  			cmd.msg="Loged Out";
+		  	  			client.sendToClient(cmd);
 		  	  		break;
 			  	
 	  	  		
