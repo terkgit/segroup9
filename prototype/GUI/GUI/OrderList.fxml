@@ -29,6 +29,6 @@
             <Font size="10.0" />
          </font>
       </Text>
-      <Button layoutX="310.0" layoutY="364.0" mnemonicParsing="false" onAction="#gotoWelcome" text="Cancel" />
+      <Button layoutX="310.0" layoutY="364.0" mnemonicParsing="false" onAction="#orderListCancel" text="Cancel" />
    </children>
 </AnchorPane>

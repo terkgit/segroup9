@@ -361,17 +361,17 @@ public class jdbc {
 		order=(Order) cmd.obj;
 		
 //		Date now = new Date();
-		Date deliveryDate = order.getFormatter().parse(order.getDeliveryDate());
-		long nowMilli = new Date().getTime(); 					//***Convert Current Time to Milliseconds
-		long deliverMilli = deliveryDate.getTime();		//***Convert Delivery Time to Milliseconds
-		long diff = deliverMilli - nowMilli;			//***Calculated Difference between two dates 
-		double hours = ((double)diff)/1000/60/60;		//***Convert Milliseconds to Hours/ 1 second = 1000 milliseconds/ 1 minute = 60 seconds/ 1 hour = 60 minutes 
-		if(hours < 1)
-			order.setRefund(0);
-		else if(hours>=1 && hours<3)
-			order.setRefund(order.getPrice()*0.5);
-		else
-			order.setRefund(order.getPrice());
+//		Date deliveryDate = order.getFormatter().parse(order.getDeliveryDate());
+//		long nowMilli = new Date().getTime(); 					//***Convert Current Time to Milliseconds
+//		long deliverMilli = deliveryDate.getTime();		//***Convert Delivery Time to Milliseconds
+//		long diff = deliverMilli - nowMilli;			//***Calculated Difference between two dates 
+//		double hours = ((double)diff)/1000/60/60;		//***Convert Milliseconds to Hours/ 1 second = 1000 milliseconds/ 1 minute = 60 seconds/ 1 hour = 60 minutes 
+//		if(hours < 1)
+//			order.setRefund(0);
+//		else if(hours>=1 && hours<3)
+//			order.setRefund(order.getPrice()*0.5);
+//		else
+//			order.setRefund(order.getPrice());
 		order.setStatus("Canceled");
 		return  updateItemInDataBase(cmd);
 	}

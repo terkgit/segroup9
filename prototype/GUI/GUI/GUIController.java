@@ -475,6 +475,22 @@ public class GUIController {
 
 	@SuppressWarnings("unused")private void __OrderList__() {}
 	
+	@FXML void orderListCancel(ActionEvent event) throws InterruptedException, IOException {
+		Order selected=ordersTable.getSelectionModel().getSelectedItem();
+		generalMsg.setText("canceling order "+selected.getId());
+
+		client.ClientConsole.send(new Command("!cancel",selected));
+		int status = replyWait();
+		System.out.println("reply recieved: "+(status!=0));
+
+		client.ClientConsole.send(new Command("!getOrders",localUser));
+		status = replyWait();
+		System.out.println("reply recieved: "+(status!=0));
+		
+		gotoOrderList(event);
+		
+	}
+	
 	@FXML void gotoOrderList(ActionEvent event) throws IOException, InterruptedException {
 		
 		client.ClientConsole.send(new Command("!getOrders",localUser));
