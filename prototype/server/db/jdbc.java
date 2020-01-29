@@ -170,7 +170,7 @@ public class jdbc {
 					rs.moveToInsertRow();
 					rs.updateString("username", user.getUserName());
 					rs.updateString("password", user.getPassword());
-					rs.updateString("permissionLevel", user.getPermLevel());
+					rs.updateString("permissionLevel", "SignedUser");
 					rs.insertRow();
 					result = "signUp - Success";
 					

@@ -121,7 +121,7 @@ public class GUIController {
         		welcomeOrdersBtn.setVisible(true);
         		welcomeValidateBtn.setVisible(true);   		
         	}
-        	else if(localUser.getPermLevel().equals("ValidatedUser")) {
+        	else if(localUser.getPermLevel().equals("Validated")) {
         		welcomeOrdersBtn.setVisible(true);
         	}
     			
