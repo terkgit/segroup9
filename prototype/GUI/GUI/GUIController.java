@@ -202,6 +202,14 @@ public class GUIController {
     	if(localUser.getPermLevel().equals("Validated")) {
     		System.out.println("{---\nsending !order"+localOrder.getDetails()+"---}");
     		localOrder.setDeliveryDate(orderDate.getValue().toString());
+    		localOrder.setAddress(orderAdressTF.getText());
+    		localOrder.setPhone(orderPhoneTF.getText());
+    		if(orderCardCB.isSelected()) {
+    			localOrder.setCard(orderCardTA.getText());
+    		}
+    		else {
+    			localOrder.setCard("");
+    		}
     		client.ClientConsole.send(new Command("!order",localOrder));
     	}
     	else {
